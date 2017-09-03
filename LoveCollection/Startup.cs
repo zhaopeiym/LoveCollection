@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Unicode;
 using Microsoft.Extensions.WebEncoders;
 using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace LoveCollection
 {
@@ -45,6 +46,18 @@ namespace LoveCollection
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+
+            var staticfile = new StaticFileOptions();
+            //staticfile.FileProvider = new PhysicalFileProvider(@"C:\");//指定目录 这里指定C盘,也可以是其它目录
+            //staticfile.ServeUnknownFileTypes = true;
+            //staticfile.DefaultContentType = "application/x-msdownload"; //设置默认  MIME
+            var provider = new FileExtensionContentTypeProvider();
+            provider.Mappings.Add(".crx", "application/x-msdownload");//手动设置对应MIME
+            staticfile.ContentTypeProvider = provider;
+            app.UseStaticFiles(staticfile);
+
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
