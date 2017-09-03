@@ -13,9 +13,9 @@ namespace LoveCollection.Entities
     public class Collection
     {
         public int Id { get; set; }
-        [MaxLength(200)]
+        [MaxLength(300)]
         public string Url { get; set; }
-        [MaxLength(50)]
+        [MaxLength(200)]
         public string Title { get; set; }
 
 

@@ -11,9 +11,10 @@ using System;
 namespace LoveCollection.Migrations
 {
     [DbContext(typeof(CollectionDBCotext))]
-    partial class CollectionDBCotextModelSnapshot : ModelSnapshot
+    [Migration("20170903095114_db4")]
+    partial class db4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

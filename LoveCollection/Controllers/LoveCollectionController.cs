@@ -110,11 +110,16 @@ namespace LoveCollection.Controllers
 
             using (HttpClient http = new HttpClient())
             {
-                var htmlString = await http.GetStringAsync(url);
-                HtmlParser htmlParser = new HtmlParser();
-                var title = htmlParser.Parse(htmlString)
-                    .QuerySelector("title")?.TextContent ?? url;
-
+                var title = url;
+                try
+                {
+                    var htmlString = await http.GetStringAsync(url);
+                    HtmlParser htmlParser = new HtmlParser();
+                    title = htmlParser.Parse(htmlString)
+                        .QuerySelector("title")?.TextContent ?? url;
+                }
+                catch (Exception) { }
+                title = title.Split('-')[0];
                 var sort = 0.0;
                 if (await _collectionDBCotext.Collections.AnyAsync(t => t.UserId == userId))
                     sort = await _collectionDBCotext.Collections.Where(t => t.UserId == userId).MaxAsync(t => t.Sort);
@@ -294,7 +299,7 @@ namespace LoveCollection.Controllers
                 EmailHelper email = new EmailHelper();
                 email.MailToArray = new string[] { mail };
                 var checkUrl = Request.Host.Value + "/api/LoveCollection/CheckLogin?desstring=" + DESString;
-                email.MailBody = EmailHelper.TempBody(mail, "请复制打开链接(或者右键新标签中打开)，完成验证。", "<a style='word-wrap: break-word;word-break: break-all;' href='http://" + checkUrl + "'>"+ checkUrl + "</a>");
+                email.MailBody = EmailHelper.TempBody(mail, "请复制打开链接(或者右键新标签中打开)，完成验证。", "<a style='word-wrap: break-word;word-break: break-all;' href='http://" + checkUrl + "'>" + checkUrl + "</a>");
                 email.Send();
             }
             else

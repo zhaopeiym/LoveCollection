@@ -1,4 +1,5 @@
 ﻿@using LoveCollection.Dto;
+@using System.Text;
 @{
     ViewData["Title"] = "爱收藏";
 
@@ -41,8 +42,8 @@
     .content {
         /*border: 1px dashed #0094ff;*/
         margin-top: 15px;
-        margin-left: 15%;
-        margin-right: 15%;
+        margin-left: 3%;
+        margin-right: 3%;
     }
 
         .content * {
@@ -75,14 +76,14 @@
 
         .content .cell {
             float: left;
-            width: 20%;
+            width: 25%;
             border: 1px dashed #ffffff;
         }
 
             .content .cell div {
                 /*border: 1px dashed #faf4f0;*/
                 margin: 5px;
-                height: 25px;
+                /*height: 25px;*/
             }
 
     .highlight {
@@ -127,7 +128,8 @@
     }
 
     .div-edit {
-        padding-top: 4px;
+        padding-top: 2px;
+        padding-bottom: 2px;
     }
 
     .span-edit {
@@ -151,6 +153,10 @@
     .logout {
         margin-left: 8px;
     }
+
+    .a-url-address {
+        word-wrap: break-word;
+    }
 </style>
 
 <div class="content clearfix">
@@ -161,7 +167,7 @@
             <input type="password" placeholder="请输入您的密码" class="passwod" />
             <button type="button" class="btn-register">登录</button>
         </div>
-        <div class="div-logout displayNone">
+        <div class="div-logout">
             <span class="userName"></span>
             <a href="javascript:;" class="logout">退出登录</a>
         </div>
@@ -189,7 +195,8 @@
                             <div class="cell" data-id="@item.Id">
                                 <div class="div-edit">
                                     <span class="span-edit">
-                                        <a class="a-url-address" draggable="true" title="@item.Title" href="@item.Url">@item.Title</a>
+                                        <a class="a-url-address" draggable="true" title="@item.Title"
+                                           href="@item.Url">@(item.Title.Length > 40 ? item.Title.Substring(0, 40) : item.Title)</a>
                                     </span>
                                     <a class="btn-edit visibilityHidden"><img src="/images/edit.png" /></a>
                                     <a class="btn-del visibilityHidden"><img src="/images/Delete.png" /></a>
@@ -220,7 +227,7 @@
                 return '<div class="cell" data-id="' + id + '">\
                         <div class="div-edit">\
                             <span class="span-edit">\
-                                <a class="a-url-address" draggable ="true"  title="'+ title + '" href="' + url + '">' + (title && title.substring(0, 20)) + '</a>\
+                                <a class="a-url-address" draggable ="true"  title="'+ title + '" href="' + url + '">' + (title && title.substring(0, 40)) + '</a>\
                             </span >\
                             <a class="btn-edit visibilityHidden"><img src="/images/edit.png" /></a>\
                             <a class="btn-del visibilityHidden"><img src="/images/Delete.png" /></a>\
@@ -229,7 +236,7 @@
             },
             getCellA: function (url, title) {
                 url = url.indexOf("//") === -1 ? ("http://" + url) : url;
-                return '<a class="a-url-address" draggable="true" title="' + title + '" href="' + url + '">' + (title && title.substring(0, 20)) + '</a>';
+                return '<a class="a-url-address" draggable="true" title="' + title + '" href="' + url + '">' + (title && title.substring(0, 40)) + '</a>';
             },
             getCellNew: function () {
                 return '<div class="cell">\
@@ -315,6 +322,7 @@
                 var userName = method.getCookie("userName");
                 var isLogin = method.getCookie("userId");
                 if (isLogin && userName) {//登录了
+                    $(".div-login").addClass("displayNone");                
                     $(".div-logout").removeClass("displayNone");
                     $(".userName").text(userName);
                     $(".logout").click(function () {
@@ -323,6 +331,7 @@
                     });
                 }
                 else {
+                    $(".div-logout").addClass("displayNone");                
                     $(".div-login").removeClass("displayNone");
                     $(".mail").val(userName);
                 }

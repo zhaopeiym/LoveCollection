@@ -14,7 +14,7 @@ namespace LoveCollection.Entities
             CreationTime = DateTime.Now;
         }
         public int Id { get; set; }
-        [MaxLength(20)]
+        [MaxLength(50)]
         public string Mail { get; set; }
         [MaxLength(20)]
         public string Passwod { get; set; }
