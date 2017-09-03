@@ -1,0 +1,664 @@
+﻿@using LoveCollection.Dto;
+@{
+    ViewData["Title"] = "爱收藏";
+
+}
+
+<style type="text/css">
+    * {
+        padding: 0px;
+        margin: 0px;
+        box-sizing: border-box;
+        font-size: 18px;
+    }
+
+    .clearfix:before, .clearfix:after {
+        content: "";
+        display: table;
+    }
+
+    .clearfix:after {
+        clear: both;
+        overflow: hidden;
+    }
+
+    .clearfix {
+        zoom: 1; /* for ie6 & ie7 */
+    }
+
+    .red {
+        color: red;
+    }
+
+    .displayNone {
+        display: none;
+    }
+
+    .visibilityHidden {
+        visibility: hidden;
+    }
+
+    .content {
+        /*border: 1px dashed #0094ff;*/
+        margin-top: 15px;
+        margin-left: 15%;
+        margin-right: 15%;
+    }
+
+        .content * {
+            font-style: normal;
+            font-variant: normal;
+            /*font-weight: normal;*/
+            font-stretch: normal;
+            font-size: 14px;
+            line-height: 100%;
+            font-family: arial, 'Hiragino Sans GB', 'Hiragino Sans GB W3', 宋体;
+        }
+
+        .content a {
+            color: #000000;
+            text-decoration: none;
+        }
+
+            .content a:hover {
+                color: red;
+                text-decoration: underline;
+            }
+
+        .content .div-block {
+            border: 1px solid #e4e4e4;
+        }
+
+        .content .type-block {
+            margin-bottom: 10px;
+        }
+
+        .content .cell {
+            float: left;
+            width: 20%;
+            border: 1px dashed #ffffff;
+        }
+
+            .content .cell div {
+                /*border: 1px dashed #faf4f0;*/
+                margin: 5px;
+                height: 25px;
+            }
+
+    .highlight {
+        border: 1px dashed red !important;
+    }
+
+    .moveobj {
+        border: 1px dashed #808080;
+        opacity: 0.3;
+    }
+
+    .btn-addtype {
+    }
+
+    .addtypeContent div {
+        text-align: right;
+        margin-bottom: 15px;
+        width: 100%;
+        color: #0094ff;
+    }
+
+    .addtypeContent a {
+        color: #ff6a00;
+    }
+
+    .panel-title {
+        margin-bottom: 3px;
+        color: #118850;
+        font-weight: 600;
+    }
+
+        .panel-title span {
+            padding-right: 10px;
+            padding-top: 10px;
+        }
+
+    input[type="text"], input[type="password"] {
+        border: 0px;
+        border-bottom: 1px dashed #808080;
+        outline: medium;
+        padding-bottom: 2px;
+    }
+
+    .div-edit {
+        padding-top: 4px;
+    }
+
+    .span-edit {
+        margin-right: 10px;
+        cursor: default;
+        color: #ff6a00;
+    }
+
+    .btn-edit {
+        margin-right: 5px;
+    }
+
+    .span-edit input {
+        width: 90%;
+    }
+
+    .div-edit img {
+        vertical-align: bottom;
+    }
+
+    .logout {
+        margin-left: 8px;
+    }
+</style>
+
+<div class="content clearfix">
+
+    <div class="addtypeContent clearfix">
+        <div class="div-login displayNone">
+            <input type="text" placeholder="请输入您的邮箱" class="mail" />
+            <input type="password" placeholder="请输入您的密码" class="passwod" />
+            <button type="button" class="btn-register">登录</button>
+        </div>
+        <div class="div-logout displayNone">
+            <span class="userName"></span>
+            <a href="javascript:;" class="logout">退出登录</a>
+        </div>
+        <div>
+            <input type="text" class="inp-type displayNone add-input-type" />
+            <a href="javascript:;" class="btn-addtype add">新建分类</a>
+        </div>
+    </div>
+    @{
+        var types = ViewBag.Types as List<TypesOutput>;
+        var collections = ViewBag.Collections as List<CollectionOutput>;
+        if (types != null && types.Count > 0)
+        {
+            foreach (var type in types)
+            {
+                <div class="type-block" data-typeid="@type.Id">
+                    <div data-id="@type.Id" class="panel-title">
+                        <span draggable="true">@type.Name</span>
+                        <a class="btn-type-edit visibilityHidden"><img src="/images/edit.png" /></a>
+                        <a class="btn-type-del visibilityHidden"><img src="/images/Delete.png" /></a>
+                    </div>
+                    <div class="div-block clearfix">
+                        @foreach (var item in collections.Where(t => t.TypeId == type.Id))
+                        {
+                            <div class="cell" data-id="@item.Id">
+                                <div class="div-edit">
+                                    <span class="span-edit">
+                                        <a class="a-url-address" draggable="true" title="@item.Title" href="@item.Url">@item.Title</a>
+                                    </span>
+                                    <a class="btn-edit visibilityHidden"><img src="/images/edit.png" /></a>
+                                    <a class="btn-del visibilityHidden"><img src="/images/Delete.png" /></a>
+                                </div>
+                            </div>
+                        }
+                        <div class="cell">
+                            <div class="div-edit">
+                                <span class="span-edit btn-new">新增</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    }
+
+    @*<div class="panel-title">常用链接</div><div class="div-block clearfix diyCollection"></div>*@
+</div>
+
+<script src="lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript">
+
+    var loveCollection = function () {
+        var _pageData = {
+            getCell: function (id, title, url) {
+                url = url.indexOf("//") === -1 ? ("http://" + url) : url;
+                return '<div class="cell" data-id="' + id + '">\
+                        <div class="div-edit">\
+                            <span class="span-edit">\
+                                <a class="a-url-address" draggable ="true"  title="'+ title + '" href="' + url + '">' + (title && title.substring(0, 20)) + '</a>\
+                            </span >\
+                            <a class="btn-edit visibilityHidden"><img src="/images/edit.png" /></a>\
+                            <a class="btn-del visibilityHidden"><img src="/images/Delete.png" /></a>\
+                        </div>\
+                        </div>';
+            },
+            getCellA: function (url, title) {
+                url = url.indexOf("//") === -1 ? ("http://" + url) : url;
+                return '<a class="a-url-address" draggable="true" title="' + title + '" href="' + url + '">' + (title && title.substring(0, 20)) + '</a>';
+            },
+            getCellNew: function () {
+                return '<div class="cell">\
+                        <div class="div-edit">\
+                            <span class="span-edit btn-new">新增</span>\
+                        </div>\
+                        </div>';
+            },
+            getTypeBlock: function (typeId, typeName) {
+                return '<div class="type-block" data-typeid="' + typeId + '">\
+                            <div data-id="' + typeId + '" class="panel-title"><span draggable="true">' + typeName + '</span>\
+                               <a class="btn-type-edit visibilityHidden"><img src="/images/edit.png" /></a>\
+                               <a class="btn-type-del visibilityHidden"><img src="/images/Delete.png" /></a>\
+                            </div>\
+                            <div class="div-block clearfix">\
+                                <div class="cell">\
+                                    <div class="span-edit btn-new">新增</div>\
+                                </div>\
+                            </div>\
+                        </div>';
+            },
+            getTypeTitle: function (id, name) {
+                return '<div class="type-block" data-typeid="' + id + '" >\
+                            <div  data-id="' + id + '" class="panel-title"><span draggable="true">' + name + '</span>\
+                                  <a class="btn-type-edit visibilityHidden"><img src="/images/edit.png" /></a>\
+                                  <a class="btn-type-del visibilityHidden"><img src="/images/Delete.png" /></a>\
+                            </div>\
+                            <div class="div-block clearfix"></div>\
+                        </div>';
+            },
+            getTypeOperation: function (text) {
+                return '<span draggable="true">' + text + '</span>\
+                        <a class="btn-type-edit visibilityHidden"><img src="/images/edit.png" /></a>\
+                        <a class="btn-type-del visibilityHidden"><img src="/images/Delete.png" /></a>';
+            }
+        };
+
+        return {
+            init: function () {
+                this.bindEvent();
+                this.pageInit();
+            },
+            //页面加载初始化
+            pageInit: function () {
+                //加载收藏内容
+                var loadCollection = function (typeId) {
+                    $.ajax({
+                        url: "/api/LoveCollection/GetCollectionByTypeId?typeId=" + typeId,
+                        type: "get",
+                        success: function (sData) {
+                            var tempHtml = "";
+                            for (var i = 0; i < sData.length; i++) {
+                                var data = sData[i];
+                                tempHtml += _pageData.getCell(data.id, data.title, data.url);
+                            }
+                            tempHtml += _pageData.getCellNew();
+                            $("[data-typeId='" + typeId + "']").find(".div-block").prepend(tempHtml);
+                        }
+                    });
+                }
+                //加载类型
+                var loadType = function () {
+                    $.ajax({
+                        url: "/api/LoveCollection/GetTypes",
+                        success: function (sData) {
+                            var tempTitleHtml = "";
+                            for (var i = 0; i < sData.length; i++) {
+                                var data = sData[i];
+                                tempTitleHtml += _pageData.getTypeTitle(data.id, data.name);
+                            }
+
+                            $(".content").append(tempTitleHtml);
+
+                            for (var i = 0; i < sData.length; i++) {
+                                var data = sData[i];
+                                loadCollection(data.id);
+                            }
+                        }
+                    })
+                };
+                //loadType();
+                var method = this.method;
+                var userName = method.getCookie("userName");
+                var isLogin = method.getCookie("userId");
+                if (isLogin && userName) {//登录了
+                    $(".div-logout").removeClass("displayNone");
+                    $(".userName").text(userName);
+                    $(".logout").click(function () {
+                        method.delCookie("userId");
+                        location.reload(true);
+                    });
+                }
+                else {
+                    $(".div-login").removeClass("displayNone");
+                    $(".mail").val(userName);
+                }
+            },
+            //事件绑定
+            bindEvent: function () {
+                var $content = $(".content");
+                var dropObjTyepTyep = "";
+                var dropReceiveObj;
+
+                //新建分类
+                $(".btn-addtype").click(function () {
+                    var _this = $(this);
+                    if (_this.hasClass("add")) {//新建
+                        $(".add-input-type.displayNone").removeClass("displayNone");
+                        _this.text("保存分类").addClass("save").removeClass("add").prev().focus();
+                    }
+                    else if (_this.hasClass("save")) {//保存
+                        $(".add-input-type").addClass("displayNone");
+                        var typeName = $(".add-input-type").val();
+                        _this.text("新建分类").addClass("add").removeClass("save");
+
+                        $.ajax({
+                            url: "/api/LoveCollection/AddType?name=" + typeName,
+                            success: function (sData) {
+                                var typeId = sData;
+                                $(".content").append(_pageData.getTypeBlock(typeId, typeName));
+                            }
+                        });
+                    }
+                });
+                //删除分类
+                $content.on("click", ".panel-title .btn-type-del", function () {
+                    var $this = $(this);
+                    var typeId = $this.parent().data("id");//类型id
+                    if (confirm("确定要删除类型和类型下的所有内容吗")) {
+                        $this.closest(".type-block").remove();
+                        $.ajax({
+                            url: "/api/LoveCollection/DelType?typeId=" + typeId,
+                            success: function (sData) {
+
+                            }
+                        });
+                    }
+                })
+                //保存分类（失去焦点时）
+                $content.on("blur", ".inp-title", function () {
+                    var $this = $(this);
+                    var typeId = $this.parent().data("id");//类型id
+                    $this.parent().html(_pageData.getTypeOperation($this.val())); //"<span>" + $this.val() + "</span>");
+                    $.ajax({
+                        url: "/api/LoveCollection/ModifyTypeNameById",
+                        type: "post",
+                        data: { "typeId": typeId, "typeName": $this.val() },
+                        success: function (sData) {
+
+                        }
+                    });
+                })
+                //鼠标在“分类”上面的时候
+                $content.on("mouseover", ".panel-title", function () {
+                    if ($(this).find("input").length) return;
+                    $(this).find(".btn-type-edit.visibilityHidden").removeClass("visibilityHidden");
+                    $(this).find(".btn-type-del.visibilityHidden").removeClass("visibilityHidden");
+                });
+                //鼠标在移出“分类”的时候
+                $content.on("mouseout", ".panel-title", function () {
+                    $(this).find(".btn-type-edit").addClass("visibilityHidden");
+                    $(this).find(".btn-type-del").addClass("visibilityHidden");
+                });
+                //编辑分类名称
+                $content.on("click", ".panel-title .btn-type-edit", function () {
+                    var $this = $(this);
+                    var $panel = $this.closest(".panel-title");
+                    var text = $this.parent().find("span").text();
+                    if (!$this.find(".inp-title").length)
+                        $panel.html("<input class='inp-title' type='text' />");
+                    $panel.find(".inp-title").focus().val(text);//关闭移到最右
+                })
+                //分类(回车保存)
+                $content.on("keydown", ".inp-modify", function () {
+                    if (event.keyCode == 13) {
+                        $(this).blur();//调用失去焦点事件
+                    }
+                });
+                //分类(回车保存)
+                $content.on("keydown", ".add-input-type", function () {
+                    if (event.keyCode == 13) {
+                        $(this).next().click();//调用失去焦点事件
+                    }
+                });
+
+                //【类型】拖动
+                $content.on("dragstart", ".panel-title span", function () {
+                    dropObjTyep = "urlType";
+                    var obj = $(event.target).closest(".panel-title");
+                    obj.closest(".type-block").addClass("moveobj");
+                    event.dataTransfer.setData("Text", obj.data("id"));
+                });
+                //【类型】设置可以接收拖动
+                $content.on("dragover", ".type-block", function () {
+                    if (dropObjTyep !== "urlType") return;
+                    event.preventDefault();
+                    $(".type-block.highlight").removeClass("highlight");
+                    var obj = $(event.target).closest("div.type-block");
+                    obj.addClass("highlight");
+                    dropReceiveObj = obj;
+                });
+                //【url】拖动
+                $content.on("dragstart", ".a-url-address", function () {
+                    dropObjTyep = "url";
+                    var obj = $(event.target).closest(".cell");
+                    obj.addClass("moveobj");
+                    event.dataTransfer.setData("Text", obj.data("id"));
+                });
+                //【url】设置可以接收拖动
+                $content.on("dragover", ".cell", function () {
+                    if (dropObjTyep !== "url") return;
+                    event.preventDefault();
+                    $(".cell.highlight").removeClass("highlight");
+                    var obj = $(event.target).closest("div.cell");
+                    obj.addClass("highlight");
+                    dropReceiveObj = obj;
+                });
+                //接收拖动数据
+                $("html").on("drop", function () {
+                    event.preventDefault();
+
+                    //接收拖动数据【url】
+                    var dropUrl = function () {
+                        var urlId = event.dataTransfer.getData("Text");
+                        var moveEle = $(".cell[data-id='" + urlId + "']");//正在移动的对象
+                        var receiveEle = $(dropReceiveObj).closest("div.cell");//准备与之换位的对象
+
+                        if (receiveEle.prev().data("id") === moveEle.data("id"))//如果本来就在对象的前面，则移到后面
+                            receiveEle.after(moveEle);
+                        else
+                            receiveEle.before(moveEle);//移到对象的前面
+
+                        //$(moveEle).removeClass("moveobj").removeClass("highlight");
+                        //$(moveEle).prev().removeClass("highlight");
+                        //$(moveEle).next().removeClass("highlight");
+                        var typeId = $(receiveEle).closest(".type-block").data("typeid");//类型id
+
+                        $.ajax({
+                            url: "/api/LoveCollection/ModifySort",
+                            data: { "id": $(moveEle).data("id"), "typeId": typeId, "previd": $(moveEle).prev().data("id"), "nextid": $(moveEle).next().data("id") },
+                            type: "post",
+                            success: function (sData) {
+
+                            }
+                        })
+                    };
+
+                    //接收拖动数据【类型】
+                    var dropUrlType = function () {
+                        var typeId = event.dataTransfer.getData("Text");
+                        var moveEle = $(".type-block[data-typeid='" + typeId + "']");//正在移动的对象
+                        var receiveEle = dropReceiveObj;//准备与之换位的对象
+
+                        if (receiveEle.prev().data("typeid") === moveEle.data("typeid"))//如果本来就在对象的前面，则移到后面
+                            receiveEle.after(moveEle);
+                        else
+                            receiveEle.before(moveEle);//移到对象的前面
+                        //$(moveEle).removeClass("moveobj").removeClass("highlight");
+                        //$(moveEle).prev().removeClass("highlight");
+                        //$(moveEle).next().removeClass("highlight");
+                        $.ajax({
+                            url: "/api/LoveCollection/ModifyTypeSort",
+                            data: { "id": $(moveEle).data("typeid"), "previd": $(moveEle).prev().data("typeid"), "nextid": $(moveEle).next().data("typeid") },
+                            type: "post",
+                            success: function (sData) {
+
+                            }
+                        });
+                    }
+
+                    //接收拖动数据【url】
+                    if (dropReceiveObj.hasClass("cell")) {
+                        dropUrl();
+                    }
+                    //接收拖动数据【类型】
+                    else if (dropReceiveObj.hasClass("type-block")) {
+                        dropUrlType();
+                    }
+
+                    $(".highlight").removeClass("highlight");
+                    $(".moveobj").removeClass("moveobj");
+                });
+                //设置可以拖放
+                $("html").on("dragover", function () {
+                    event.preventDefault();
+                });
+
+                //新增【url】
+                $content.on("click", ".btn-new", (function () {
+                    var $this = $(this);
+                    if ($this.find(".inp-edit").length) return;
+                    if ($this.find("a").length) return;
+
+                    $this.html("<input class='inp-edit' type='text' />").find(".inp-edit").focus();
+                }));
+                //回车保存
+                $content.on("keydown", ".inp-edit", function () {
+                    if (event.keyCode == 13) {
+                        $(this).blur();//调用失去焦点事件
+                    }
+                });
+                //保存【url】
+                $content.on("blur", ".inp-edit", function () {
+                    var $this = $(this);
+                    var typeId = $this.closest(".type-block").data("typeid");
+                    var $divBlock = $this.closest(".div-block");
+                    var url = $this.val().indexOf("//") === -1 ? ("http://" + $this.val()) : $this.val();
+                    var $oldCell = $this.closest(".cell");
+                    $oldCell.find(".span-edit").html('解析保存中...');
+                    $.ajax({
+                        url: "/api/LoveCollection/AddCollection",
+                        data: { "url": url, "typeId": typeId },
+                        type: "post",
+                        success: function (sData) {
+                            $oldCell.remove();
+                            $divBlock.append(_pageData.getCell(sData.id, sData.title, url));
+                            $divBlock.append(_pageData.getCellNew());
+                        },
+                        error: function () {
+                            $oldCell.find(".span-edit").html('新增');
+                            //$this.parent().html('新增');
+                        }
+                    });
+                });
+                //回车保存
+                $content.on("keydown", ".inp-title", function () {
+                    if (event.keyCode == 13) {
+                        $(this).blur();//调用失去焦点事件
+                    }
+                });
+                //点击编辑【url】
+                $content.on("click", ".btn-edit", function () {
+                    var $this = $(this);
+                    $(this).addClass("visibilityHidden");
+                    $(this).next().addClass("visibilityHidden");
+                    var $spanedit = $this.parent().find(".span-edit");
+                    var title = $spanedit.find("a").prop("title");
+                    var href = $spanedit.find("a").prop("href");
+                    var value = "#" + title + "#" + href;
+                    $spanedit.html("<input spellcheck='false'  class='inp-modify' type='text' value='" + value + "'/>").find("input").focus();
+                })
+                //删除【url】
+                $content.on("click", ".btn-del", function () {
+                    var $this = $(this);
+                    var id = $this.closest(".cell").data("id");
+                    if (confirm("确定要删除吗")) {
+                        $this.closest(".cell").remove();
+                        $.ajax({
+                            url: "/api/LoveCollection/DelCollection?id=" + id,
+                            success: function (sData) {
+
+                            }
+                        });
+                    }
+                })
+                //保存（保存修改）
+                $content.on("blur", ".inp-modify", function () {
+                    var $this = $(this);
+                    var id = $this.closest(".cell").data("id");
+                    var strs = $this.val().split('#');
+                    if (strs.length !== 3 || !strs[2]) return;
+                    $this.parent().html(_pageData.getCellA(strs[2], strs[1]));
+                    $.ajax({
+                        url: "/api/LoveCollection/ModifyCollection",
+                        type: "post",
+                        data: { "id": id, "url": strs[2], "title": strs[1] },
+                        success: function (sData) {
+
+                        }
+                    });
+                })
+                //鼠标进入（编辑）
+                $content.on("mouseover", ".cell", function () {
+                    if ($(this).find("input").length) return;
+                    $(this).find(".btn-edit.visibilityHidden").removeClass("visibilityHidden");
+                    $(this).find(".btn-del.visibilityHidden").removeClass("visibilityHidden");
+                });
+                //鼠标移出
+                $content.on("mouseout", ".cell", function () {
+                    $(this).find(".btn-edit").addClass("visibilityHidden");
+                    $(this).find(".btn-del").addClass("visibilityHidden");
+                });
+
+                //登录/注册
+                $(".btn-register").click(function () {
+                    var mail = $(".mail").val();
+                    var passwod = $(".passwod").val();
+                    $.ajax({
+                        url: "/api/LoveCollection/Register",
+                        type: "post",
+                        data: { "mail": mail, "passwod": passwod },
+                        success: function (sData) {
+                            if (!sData.isSuccess) {
+                                alert(sData.message);
+                            }
+                            else {
+                                location.reload(true);
+                            }
+                        },
+                    });
+                });
+                //回车登录
+                $content.on("keydown", ".passwod", function () {
+                    if (event.keyCode == 13) {
+                        $(".btn-register").click();
+                    }
+                });
+            },
+            //方法
+            method: {
+                getCookie: function (name) {
+                    var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+                    if (arr = document.cookie.match(reg))
+                        return unescape(arr[2]);
+                    else
+                        return null;
+                },
+                delCookie: function (name) {
+                    var exp = new Date();
+                    exp.setTime(exp.getTime() - 1);
+                    var cval = this.getCookie(name);
+                    if (cval != null)
+                        document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+                }
+            }
+        };
+    }();
+
+    $(function () {
+        loveCollection.init();
+    });
+</script>
