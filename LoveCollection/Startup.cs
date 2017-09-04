@@ -52,7 +52,7 @@ namespace LoveCollection
             //staticfile.ServeUnknownFileTypes = true;
             //staticfile.DefaultContentType = "application/x-msdownload"; //设置默认  MIME
             var provider = new FileExtensionContentTypeProvider();
-            provider.Mappings.Add(".crx", "application/x-msdownload");//手动设置对应MIME
+            provider.Mappings.Add(".crx", "application/octet-stream");//手动设置对应MIME
             staticfile.ContentTypeProvider = provider;
             app.UseStaticFiles(staticfile);
 
