@@ -1,6 +1,7 @@
 ﻿//右键功能
 chrome.contextMenus.create({
     title: "浏览查看爱收藏",
+    contexts: ['page'],
     onclick: function (info, tab) {
         window.open("https://i.haojima.net");
     }
@@ -8,9 +9,18 @@ chrome.contextMenus.create({
 
 chrome.contextMenus.create({
     title: "添加网址到爱收藏",
+    contexts: ['page'],
+    onclick: function (info, tab) {             
+        collection(info, function () {
+            alert("收藏成功");
+        });
+    }
+});
+
+chrome.contextMenus.create({
+    title: "添加链接到爱收藏",
+    contexts: ['link'],
     onclick: function (info, tab) {
-        //for (var t in info) { 
-        //}         
         collection(info, function () {
             alert("收藏成功");
         });
@@ -19,7 +29,8 @@ chrome.contextMenus.create({
 
 chrome.contextMenus.create({
     title: "添加爱收藏并浏览",
-    onclick: function (info, tab) {
+    contexts: ['page','link'],
+    onclick: function (info, tab) {     
         collection(info, function () {
             window.open("https://i.haojima.net");
         });
@@ -27,7 +38,7 @@ chrome.contextMenus.create({
 });
 
 function collection(info, callBack) {
-    var url = info.pageUrl;
+    var url = info["linkUrl"] || info["pageUrl"];    
     chrome.cookies.get({ url: "https://i.haojima.net", name: "userId" }, function (cookie) {
         if (!cookie.value) {
             alert("请先登录爱收藏登录");
