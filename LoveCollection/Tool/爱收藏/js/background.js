@@ -10,7 +10,7 @@ chrome.contextMenus.create({
 chrome.contextMenus.create({
     title: "添加网址到爱收藏",
     contexts: ['page'],
-    onclick: function (info, tab) {             
+    onclick: function (info, tab) {
         collection(info, function () {
             alert("收藏成功");
         });
@@ -29,8 +29,8 @@ chrome.contextMenus.create({
 
 chrome.contextMenus.create({
     title: "添加爱收藏并浏览",
-    contexts: ['page','link'],
-    onclick: function (info, tab) {     
+    contexts: ['page', 'link'],
+    onclick: function (info, tab) {
         collection(info, function () {
             window.open("https://i.haojima.net");
         });
@@ -38,10 +38,10 @@ chrome.contextMenus.create({
 });
 
 function collection(info, callBack) {
-    var url = info["linkUrl"] || info["pageUrl"];    
-    chrome.cookies.get({ url: "https://i.haojima.net", name: "userId" }, function (cookie) {
-        if (!cookie.value) {
-            alert("请先登录爱收藏登录");
+    var url = info["linkUrl"] || info["pageUrl"];
+    chrome.cookies.get({ url: "https://i.haojima.net", name: "userId" }, function (cookie) {    
+        if (cookie === null || !cookie.value) {
+            alert("请先登录爱收藏");
             window.open("https://i.haojima.net");
             return;
         }
