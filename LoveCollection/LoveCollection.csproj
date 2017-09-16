@@ -27,7 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\爱收藏.crx" />
+    <None Include="wwwroot\爱收藏.crx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
