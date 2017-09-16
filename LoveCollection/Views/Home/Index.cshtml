@@ -35,6 +35,14 @@
         display: none;
     }
 
+    .displayInlineBlock {
+        display: inline-block
+    }
+
+    html {
+        background: #F2F4F7;
+    }
+
     .visibilityHidden {
         visibility: hidden;
     }
@@ -57,9 +65,21 @@
         }
 
         .content a {
-            color: #000000;
+            display: inline-block;
+            display: -webkit-inline-box;
+            padding: 2px;
             text-decoration: none;
         }
+
+            .content a.a-url-address {
+                color: #335566;
+                /*background: #E3F2F7;*/
+                /*border: 1px dashed #d1e1e6;*/
+                border: 1px dashed #88969b;
+                border-radius: 5px;
+                background-color: #eef6f8;
+                text-decoration: none;
+            }
 
             .content a:hover {
                 color: red;
@@ -67,22 +87,32 @@
             }
 
         .content .div-block {
-            border: 1px solid #e4e4e4;
+            border-top: 1px solid #D9D9D9;
+            padding-left: 2px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            /*border: 1px solid #f6f6f6;
+            background:#fff;*/
         }
 
         .content .type-block {
+            /*padding: 2px;*/
             margin-bottom: 10px;
+            border: 1px solid #DEE3EB;
+            background: #fff;
         }
 
         .content .cell {
             float: left;
-            width: 25%;
+            /*width: 25%;*/
+            margin-right: 5px;
             border: 1px dashed #ffffff;
         }
 
             .content .cell div {
                 /*border: 1px dashed #faf4f0;*/
-                margin: 5px;
+                /*margin-top: 3px;*/
+                margin-bottom: 3px;
                 /*height: 25px;*/
             }
 
@@ -110,13 +140,15 @@
     }
 
     .panel-title {
-        margin-bottom: 3px;
+        /*margin-bottom: 3px;*/
         color: #118850;
         font-weight: 600;
+        /*background: #f6f6f6;*/
     }
 
         .panel-title span {
             padding-right: 10px;
+            padding-left: 5px;
             padding-top: 10px;
         }
 
@@ -128,22 +160,29 @@
     }
 
     .div-edit {
-        padding-top: 2px;
-        padding-bottom: 2px;
+        /*padding-top: 2px;*/
+        /*padding-bottom: 2px;*/
+        /*margin-top: 5px;*/
+    }
+
+    .btn-new {
+        padding-top: 5px;
     }
 
     .span-edit {
-        margin-right: 10px;
+        /*margin-right: 10px;*/
+        margin-right: 2px;
         cursor: default;
         color: #ff6a00;
     }
 
     .btn-edit {
-        margin-right: 5px;
+        /*margin-right: 5px;*/
     }
 
     .span-edit input {
-        width: 90%;
+        /*width: 90%;*/
+        width: 250px;
     }
 
     .div-edit img {
@@ -173,8 +212,8 @@
         </div>
         <div>
             <input type="text" class="inp-type displayNone add-input-type" />
-            <a href="javascript:;" class="btn-addtype add">新建分类</a>            
-            <a href="/crx.crx" style="margin-left:10px;color:#000000">【爱收藏】插件</a>
+            <a href="javascript:;" class="btn-addtype add">新建分类</a>
+            <a href="/爱收藏.crx" style="margin-left:10px;color:#000000">【爱收藏】插件</a>
         </div>
     </div>
     @{
@@ -197,7 +236,7 @@
                                 <div class="div-edit">
                                     <span class="span-edit">
                                         <a class="a-url-address" draggable="true" title="@item.Title"
-                                           href="@item.Url">@(item.Title.Length > 40 ? item.Title.Substring(0, 40) : item.Title)</a>
+                                           href="@item.Url">@(item.Title.Trim())</a>
                                     </span>
                                     <a class="btn-edit visibilityHidden"><img src="/images/edit.png" /></a>
                                     <a class="btn-del visibilityHidden"><img src="/images/Delete.png" /></a>
@@ -206,7 +245,7 @@
                         }
                         <div class="cell">
                             <div class="div-edit">
-                                <span class="span-edit btn-new">新增</span>
+                                <span class="span-edit btn-new displayNone">新增</span>
                             </div>
                         </div>
                     </div>
@@ -228,7 +267,7 @@
                 return '<div class="cell" data-id="' + id + '">\
                         <div class="div-edit">\
                             <span class="span-edit">\
-                                <a class="a-url-address" draggable ="true"  title="'+ title + '" href="' + url + '">' + (title && title.substring(0, 40)) + '</a>\
+                                <a class="a-url-address" draggable ="true"  title="'+ title + '" href="' + url + '">' + title + '</a>\
                             </span >\
                             <a class="btn-edit visibilityHidden"><img src="/images/edit.png" /></a>\
                             <a class="btn-del visibilityHidden"><img src="/images/Delete.png" /></a>\
@@ -237,12 +276,12 @@
             },
             getCellA: function (url, title) {
                 url = url.indexOf("//") === -1 ? ("http://" + url) : url;
-                return '<a class="a-url-address" draggable="true" title="' + title + '" href="' + url + '">' + (title && title.substring(0, 40)) + '</a>';
+                return '<a class="a-url-address" draggable="true" title="' + title + '" href="' + url + '">' + title + '</a>';
             },
             getCellNew: function () {
                 return '<div class="cell">\
                         <div class="div-edit">\
-                            <span class="span-edit btn-new">新增</span>\
+                            <span class="span-edit btn-new displayNone">新增</span>\
                         </div>\
                         </div>';
             },
@@ -254,7 +293,7 @@
                             </div>\
                             <div class="div-block clearfix">\
                                 <div class="cell">\
-                                    <div class="span-edit btn-new">新增</div>\
+                                    <div class="span-edit btn-new displayNone">新增</div>\
                                 </div>\
                             </div>\
                         </div>';
@@ -323,7 +362,7 @@
                 var userName = method.getCookie("userName");
                 var isLogin = method.getCookie("userId");
                 if (isLogin && userName) {//登录了
-                    $(".div-login").addClass("displayNone");                
+                    $(".div-login").addClass("displayNone");
                     $(".div-logout").removeClass("displayNone");
                     $(".userName").text(userName);
                     $(".logout").click(function () {
@@ -332,7 +371,7 @@
                     });
                 }
                 else {
-                    $(".div-logout").addClass("displayNone");                
+                    $(".div-logout").addClass("displayNone");
                     $(".div-login").removeClass("displayNone");
                     $(".mail").val(userName);
                 }
@@ -527,13 +566,77 @@
                     event.preventDefault();
                 });
 
+                //回车保存
+                $content.on("keydown", ".inp-title", function () {
+                    if (event.keyCode == 13) {
+                        $(this).blur();//调用失去焦点事件
+                    }
+                });
+                //点击编辑【url】
+                $content.on("click", ".btn-edit", function () {
+                    var $this = $(this);
+                    $(this).addClass("visibilityHidden");
+                    $(this).next().addClass("visibilityHidden");
+                    var $spanedit = $this.parent().find(".span-edit");
+                    var title = $spanedit.find("a").prop("title");
+                    var href = $spanedit.find("a").prop("href");
+                    $spanedit.html("<input spellcheck='false' class='inp-modify' type='text'/>")
+                        .find("input")
+                        .focus()
+                        .data("href", href)
+                        .val(title);
+                })
+                //删除【url】
+                $content.on("click", ".btn-del", function () {
+                    var $this = $(this);
+                    var id = $this.closest(".cell").data("id");
+                    if (confirm("确定要删除吗")) {
+                        $this.closest(".cell").remove();
+                        $.ajax({
+                            url: "/api/LoveCollection/DelCollection?id=" + id,
+                            success: function (sData) {
+
+                            }
+                        });
+                    }
+                })
+                //保存（保存修改）
+                $content.on("blur", ".inp-modify", function () {
+                    var $this = $(this);
+                    var id = $this.closest(".cell").data("id");
+                    var title = $this.val();
+                    var href = $this.data("href");
+                    //if (strs.length !== 3 || !strs[2]) return;
+                    $this.parent().html(_pageData.getCellA(href, title));
+                    $.ajax({
+                        url: "/api/LoveCollection/ModifyCollection",
+                        type: "post",
+                        data: { "id": id, "url": href, "title": title },
+                        success: function (sData) {
+
+                        }
+                    });
+                })
+                //鼠标进入（编辑）
+                $content.on("mouseover", ".cell", function () {
+                    if ($(this).find("input").length) return;
+                    $(this).find(".btn-edit.visibilityHidden").removeClass("visibilityHidden");
+                    $(this).find(".btn-del.visibilityHidden").removeClass("visibilityHidden");
+                });
+                //鼠标移出
+                $content.on("mouseout", ".cell", function () {
+                    $(this).find(".btn-edit").addClass("visibilityHidden");
+                    $(this).find(".btn-del").addClass("visibilityHidden");
+                });
+
                 //新增【url】
                 $content.on("click", ".btn-new", (function () {
                     var $this = $(this);
                     if ($this.find(".inp-edit").length) return;
                     if ($this.find("a").length) return;
 
-                    $this.html("<input class='inp-edit' type='text' />").find(".inp-edit").focus();
+                    $this.html("<input class='inp-edit' type='text' />").find("input").focus();
+                    $this.removeClass("btn-new");
                 }));
                 //回车保存
                 $content.on("keydown", ".inp-edit", function () {
@@ -542,8 +645,9 @@
                     }
                 });
                 //保存【url】
-                $content.on("blur", ".inp-edit", function () {
+                $content.on("blur", "input.inp-edit", function () {
                     var $this = $(this);
+                    if (!$this.val()) return;
                     var typeId = $this.closest(".type-block").data("typeid");
                     var $divBlock = $this.closest(".div-block");
                     var url = $this.val().indexOf("//") === -1 ? ("http://" + $this.val()) : $this.val();
@@ -564,63 +668,13 @@
                         }
                     });
                 });
-                //回车保存
-                $content.on("keydown", ".inp-title", function () {
-                    if (event.keyCode == 13) {
-                        $(this).blur();//调用失去焦点事件
-                    }
+                //【新增按钮】鼠标进入（编辑）
+                $content.on("mouseover", ".div-block", function () {
+                    $(this).find(".btn-new").removeClass("displayNone").addClass("displayInlineBlock");
                 });
-                //点击编辑【url】
-                $content.on("click", ".btn-edit", function () {
-                    var $this = $(this);
-                    $(this).addClass("visibilityHidden");
-                    $(this).next().addClass("visibilityHidden");
-                    var $spanedit = $this.parent().find(".span-edit");
-                    var title = $spanedit.find("a").prop("title");
-                    var href = $spanedit.find("a").prop("href");
-                    var value = "#" + title + "#" + href;
-                    $spanedit.html("<input spellcheck='false'  class='inp-modify' type='text' value='" + value + "'/>").find("input").focus();
-                })
-                //删除【url】
-                $content.on("click", ".btn-del", function () {
-                    var $this = $(this);
-                    var id = $this.closest(".cell").data("id");
-                    if (confirm("确定要删除吗")) {
-                        $this.closest(".cell").remove();
-                        $.ajax({
-                            url: "/api/LoveCollection/DelCollection?id=" + id,
-                            success: function (sData) {
-
-                            }
-                        });
-                    }
-                })
-                //保存（保存修改）
-                $content.on("blur", ".inp-modify", function () {
-                    var $this = $(this);
-                    var id = $this.closest(".cell").data("id");
-                    var strs = $this.val().split('#');
-                    if (strs.length !== 3 || !strs[2]) return;
-                    $this.parent().html(_pageData.getCellA(strs[2], strs[1]));
-                    $.ajax({
-                        url: "/api/LoveCollection/ModifyCollection",
-                        type: "post",
-                        data: { "id": id, "url": strs[2], "title": strs[1] },
-                        success: function (sData) {
-
-                        }
-                    });
-                })
-                //鼠标进入（编辑）
-                $content.on("mouseover", ".cell", function () {
-                    if ($(this).find("input").length) return;
-                    $(this).find(".btn-edit.visibilityHidden").removeClass("visibilityHidden");
-                    $(this).find(".btn-del.visibilityHidden").removeClass("visibilityHidden");
-                });
-                //鼠标移出
-                $content.on("mouseout", ".cell", function () {
-                    $(this).find(".btn-edit").addClass("visibilityHidden");
-                    $(this).find(".btn-del").addClass("visibilityHidden");
+                //【新增按钮】鼠标移出
+                $content.on("mouseout", ".div-block", function () {
+                    $(this).find(".btn-new").removeClass("displayInlineBlock").addClass("displayNone");
                 });
 
                 //登录/注册
@@ -663,6 +717,9 @@
                     var cval = this.getCookie(name);
                     if (cval != null)
                         document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+                },
+                setCookie: function (name, value, time) {
+                    document.cookie = name + "=" + value;
                 }
             }
         };

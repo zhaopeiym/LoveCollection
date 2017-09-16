@@ -5,7 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\crx.crx" />
+    <Content Include="Tool\crx\js\jquery.js">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Tool\crx\js\jquery.min.js">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Tool\crx\js\jquery.min.map">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\crx.crx" />
+    <None Include="wwwroot\爱收藏.crx" />
   </ItemGroup>
 
   <ItemGroup>

@@ -107,7 +107,35 @@ namespace LoveCollection.Controllers
             var userId = GetUserId();
             if (await _collectionDBCotext.Collections.AnyAsync(t => t.Url == url))
                 return string.Empty;
+            return await AddCollectionByUserAndType(url, userId, typeId);
+        }
 
+        /// <summary>
+        /// 插件提交保存
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="userToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<object> AddCollectionByCRX(string url, string userToken = null)
+        {
+            userToken = userToken == null ? null : HttpUtility.UrlDecode(userToken);
+            var userId = GetUserId(userToken);
+            if (await _collectionDBCotext.Collections.AnyAsync(t => t.Url == url))
+                return string.Empty;
+            var typeId = await _collectionDBCotext.Types.OrderBy(t => t.Sort).Select(t => t.Id).FirstOrDefaultAsync();
+            return await AddCollectionByUserAndType(url, userId, typeId);
+        }
+
+        /// <summary>
+        /// 保存
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="userId"></param>
+        /// <param name="typeId"></param>
+        /// <returns></returns>
+        private async Task<object> AddCollectionByUserAndType(string url, int userId, int typeId)
+        {
             using (HttpClient http = new HttpClient())
             {
                 var title = url;
@@ -352,9 +380,9 @@ namespace LoveCollection.Controllers
         /// 获取登录用户id
         /// </summary>
         /// <returns></returns>
-        private int GetUserId()
+        private int GetUserId(string userId = null)
         {
-            var userIdCookie = Request.Cookies.First(t => t.Key == "userId").Value;
+            var userIdCookie = userId ?? Request.Cookies.First(t => t.Key == "userId").Value;
             var userIdString = EncryptDecryptExtension.DES3Decrypt(userIdCookie, DESKey);
             return int.Parse(userIdString);
         }
