@@ -75,7 +75,7 @@
                 color: #335566;
                 /*background: #E3F2F7;*/
                 /*border: 1px dashed #d1e1e6;*/
-                border: 1px dashed #88969b;
+                /*border: 1px dashed #88969b;*/
                 border-radius: 5px;
                 background-color: #eef6f8;
                 text-decoration: none;
@@ -647,11 +647,14 @@
                 //保存【url】
                 $content.on("blur", "input.inp-edit", function () {
                     var $this = $(this);
-                    if (!$this.val()) return;
+                    var $oldCell = $this.closest(".cell");
+                    if (!$this.val()) {
+                        $oldCell.find(".span-edit").html('新增').addClass("btn-new");
+                        return;
+                    }
                     var typeId = $this.closest(".type-block").data("typeid");
                     var $divBlock = $this.closest(".div-block");
                     var url = $this.val().indexOf("//") === -1 ? ("http://" + $this.val()) : $this.val();
-                    var $oldCell = $this.closest(".cell");
                     $oldCell.find(".span-edit").html('解析保存中...');
                     $.ajax({
                         url: "/api/LoveCollection/AddCollection",

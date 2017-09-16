@@ -5,15 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Tool\crx\js\jquery.js">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="Tool\crx\js\jquery.min.js">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="Tool\crx\js\jquery.min.map">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+    <Compile Remove="Tool\crx\**" />
+    <Content Remove="Tool\crx\**" />
+    <EmbeddedResource Remove="Tool\crx\**" />
+    <None Remove="Tool\crx\**" />
   </ItemGroup>
 
   <ItemGroup>
