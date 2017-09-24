@@ -8,5 +8,6 @@ namespace LoveCollection.Models
     public class UserInfoModel
     {
         public string UserMail { get; set; }
+        public string UserId { get; set; }
     }
 }

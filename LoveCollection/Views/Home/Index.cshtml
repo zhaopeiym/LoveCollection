@@ -256,8 +256,8 @@
 
 <div class="content clearfix">
 
-    <div class="addtypeContent clearfix">      
-        @if (user != null && !string.IsNullOrWhiteSpace(user.UserMail))
+    <div class="addtypeContent clearfix">
+        @if (user != null && !string.IsNullOrWhiteSpace(user.UserId))
         {
             <div class="div-logout">
                 <span class="userName">@user.UserMail</span>
@@ -272,12 +272,12 @@
         </div>
     </div>
 
-    @if (user == null)
+    @if (user == null || string.IsNullOrWhiteSpace(user.UserId))
     {
         <div class=" loginBlock div-login">
             <div class="loginTitle">登录 . 注册</div>
             <div>
-                <input type="text" placeholder="请输入您的邮箱" class="mail" />
+                <input type="text" value="@user?.UserMail" placeholder="请输入您的邮箱" class="mail" />
             </div>
             <div>
                 <input type="password" placeholder="请输入您的密码" class="passwod" />
@@ -407,7 +407,7 @@
                             $("[data-typeId='" + typeId + "']").find(".div-block").prepend(tempHtml);
                         }
                     });
-                }              
+                }
                 //var method = this.method;
                 //var userName = method.getCookie("userName");
                 //var isLogin = method.getCookie("userId");

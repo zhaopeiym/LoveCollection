@@ -24,14 +24,14 @@ namespace LoveCollection.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = GetUserId();
+            ViewBag.UserInfo = new UserInfoModel()
+            {               
+                UserMail = Request.Cookies.FirstOrDefault(t => t.Key == "userName").Value,
+                UserId = Request.Cookies.FirstOrDefault(t => t.Key == "userId").Value
+            };
 
             if (userId > 0)
             {
-                ViewBag.UserInfo = new UserInfoModel()
-                {
-                    UserMail = Request.Cookies.First(t => t.Key == "userName").Value
-                };
-
                 ViewBag.Types = await _collectionDBCotext.Types
                        .Where(t => t.UserId == userId)
                        .OrderBy(t => t.Sort)
@@ -83,7 +83,6 @@ namespace LoveCollection.Controllers
 
         public IActionResult LogOff()
         {
-            Response.Cookies.Delete("userName");
             Response.Cookies.Delete("userId");
             return Redirect("/");
         }
