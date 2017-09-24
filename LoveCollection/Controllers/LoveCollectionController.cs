@@ -106,8 +106,10 @@ namespace LoveCollection.Controllers
         public async Task<object> AddCollection(string url, int typeId)
         {
             var userId = GetUserId();
-            if (await _collectionDBCotext.Collections.AnyAsync(t => t.Url == url))
+            if (await _collectionDBCotext.Collections.Where(t => t.UserId == userId).AnyAsync(t => t.Url == url))
+            {
                 return string.Empty;
+            }
             return await AddCollectionByUserAndType(url, userId, typeId);
         }
 
@@ -123,9 +125,10 @@ namespace LoveCollection.Controllers
             userToken = userToken == null ? null : HttpUtility.UrlDecode(userToken);
             var userId = GetUserId(userToken);
             if (await _collectionDBCotext.Collections
-                .Where(t => t.UserId == userId)
-                .AnyAsync(t => t.Url == url))
+                .Where(t => t.UserId == userId).AnyAsync(t => t.Url == url))
+            {
                 return string.Empty;
+            }
             var typeId = await _collectionDBCotext
                 .Types
                 .Where(t => t.UserId == userId)
