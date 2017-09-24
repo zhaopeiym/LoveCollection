@@ -11,6 +11,7 @@ using LoveCollection.Dto;
 using Newtonsoft.Json;
 using System.Web;
 using Microsoft.AspNetCore.Http;
+using Talk.Redis;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -121,9 +122,16 @@ namespace LoveCollection.Controllers
         {
             userToken = userToken == null ? null : HttpUtility.UrlDecode(userToken);
             var userId = GetUserId(userToken);
-            if (await _collectionDBCotext.Collections.AnyAsync(t => t.Url == url))
+            if (await _collectionDBCotext.Collections
+                .Where(t => t.UserId == userId)
+                .AnyAsync(t => t.Url == url))
                 return string.Empty;
-            var typeId = await _collectionDBCotext.Types.OrderBy(t => t.Sort).Select(t => t.Id).FirstOrDefaultAsync();
+            var typeId = await _collectionDBCotext
+                .Types
+                .Where(t => t.UserId == userId)
+                .OrderBy(t => t.Sort)
+                .Select(t => t.Id)
+                .FirstOrDefaultAsync();
             return await AddCollectionByUserAndType(url, userId, typeId);
         }
 
@@ -150,7 +158,9 @@ namespace LoveCollection.Controllers
                 title = title.Split('-')[0];
                 var sort = 0.0;
                 if (await _collectionDBCotext.Collections.AnyAsync(t => t.UserId == userId))
-                    sort = await _collectionDBCotext.Collections.Where(t => t.UserId == userId).MaxAsync(t => t.Sort);
+                    sort = await _collectionDBCotext.Collections
+                        .Where(t => t.UserId == userId)
+                        .MaxAsync(t => t.Sort);
                 var urlObj = _collectionDBCotext.Collections.Add(new Collection()
                 {
                     Url = url,
@@ -317,6 +327,18 @@ namespace LoveCollection.Controllers
             if (user == null || user.Passwod != passwod)//注册 或 修改密码
             {
                 requestMessage.IsSuccess = false;
+
+                RedisHelper reids = new RedisHelper(3);
+                var key = mail;
+                var number = await reids.GetStringIncrAsync(key);
+                if (number >= 3)
+                {
+                    requestMessage.Message = "请勿频繁注册，请查看垃圾邮件或换一个邮箱注册！";
+                    return requestMessage;
+                }
+                //30分钟内有效(标记邮件激活30分钟内有效)
+                await reids.SetStringIncrAsync(key, TimeSpan.FromMinutes(30));
+
                 if (user == null)
                     requestMessage.Message = "第一次登录，验证链接已发邮箱。";
                 else
@@ -326,9 +348,16 @@ namespace LoveCollection.Controllers
                 var DESString = HttpUtility.UrlEncode(EncryptDecryptExtension.DES3Encrypt(data, DESKey));
                 EmailHelper email = new EmailHelper();
                 email.MailToArray = new string[] { mail };
-                var checkUrl = Request.Host.Value + "/api/LoveCollection/CheckLogin?desstring=" + DESString;
-                email.MailBody = EmailHelper.TempBody(mail, "请复制打开链接(或者右键新标签中打开)，完成验证。", "<a style='word-wrap: break-word;word-break: break-all;' href='http://" + checkUrl + "'>" + checkUrl + "</a>");
-                email.Send();
+                var checkUrl = Request.Scheme + "://" + Request.Host.Value + "/Home/CheckLogin?desstring=" + DESString;
+                email.MailSubject = "欢迎您注册 爱收藏";
+                email.MailBody = EmailHelper.TempBody(mail, "请复制打开链接(或者右键'在新标签页中打开')，完成验证。", "<a style='word-wrap: break-word;word-break: break-all;' href='" + checkUrl + "'>" + checkUrl + "</a>");
+                email.Send(t =>
+                {
+                    //string aa = "成功";
+                }, t =>
+                {
+                    //string aa = "失败";
+                });
             }
             else
             {
@@ -342,10 +371,32 @@ namespace LoveCollection.Controllers
         /// </summary>
         /// <param name="desstring"></param>
         /// <returns></returns>
-        public async Task CheckLogin(string desstring)
+        [HttpPost]
+        public async Task<RequestMessage> CheckLogin(string desstring)
         {
-            var jsonString = EncryptDecryptExtension.DES3Decrypt(desstring, DESKey);
+            var requestMessage = new RequestMessage();
+            var jsonString = string.Empty;
+            try
+            {
+                //这里有点妖啊。
+                //如果是url直接跳转过来的就不需要HttpUtility.UrlDecode
+                //如果是ajax异步传过来的就需要HttpUtility.UrlDecode
+                jsonString = EncryptDecryptExtension.DES3Decrypt(HttpUtility.UrlDecode(desstring), DESKey);
+            }
+            catch (Exception)
+            {
+                jsonString = EncryptDecryptExtension.DES3Decrypt(desstring, DESKey);
+            }
             var dataUser = JsonConvert.DeserializeObject<User>(jsonString);
+
+            RedisHelper reids = new RedisHelper(3);
+            if (!await reids.KeyExistsAsync(dataUser.Mail, RedisTypePrefix.String))
+            {
+                requestMessage.IsSuccess = false;
+                requestMessage.Message = "激活链接已失效";
+                return requestMessage;//
+            }
+
             var user = await _collectionDBCotext.Users.Where(t => t.Mail == dataUser.Mail).FirstOrDefaultAsync();
             if (user != null)//修改密码
             {
@@ -360,7 +411,9 @@ namespace LoveCollection.Controllers
             }
             await _collectionDBCotext.SaveChangesAsync();
             SaveCookie(user);
-            Response.Redirect("/");
+
+            await reids.DeleteKeyAsync(dataUser.Mail, RedisTypePrefix.String);//删除缓存，使验证过的邮件失效            
+            return requestMessage;
         }
 
         /// <summary>
@@ -369,11 +422,18 @@ namespace LoveCollection.Controllers
         /// <param name="user"></param>
         private void SaveCookie(User user)
         {
-            Response.Cookies.Append("userName", user.Mail, new CookieOptions() { Expires = new DateTimeOffset(DateTime.Now.AddYears(1)) });
-            Response.Cookies.Append("userId", EncryptDecryptExtension.DES3Encrypt(user.Id.ToString(), DESKey), new CookieOptions()
-            {
-                Expires = new DateTimeOffset(DateTime.Now.AddMonths(1))
-            });
+            Response.Cookies.Append("userName", user.Mail,
+                new CookieOptions()
+                {
+                    Expires = new DateTimeOffset(DateTime.Now.AddYears(1)),
+                    HttpOnly = true
+                });
+            Response.Cookies.Append("userId", EncryptDecryptExtension.DES3Encrypt(user.Id.ToString(), DESKey),
+                new CookieOptions()
+                {
+                    Expires = new DateTimeOffset(DateTime.Now.AddMonths(1)),
+                    HttpOnly = true
+                });
         }
 
         /// <summary>

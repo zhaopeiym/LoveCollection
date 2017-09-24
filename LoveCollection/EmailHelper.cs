@@ -115,7 +115,7 @@ namespace LoveCollection
 		                <tbody>
 			<tr>
 				<th valign='middle' style='height: 25px; line-height: 25px; padding: 15px 35px; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #6f5499; background-color: #6f5499; border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px;'>
-					<font face='微软雅黑' size='5' style='color: rgb(255, 255, 255); '>Hi-Blogs</font>
+					<font face='微软雅黑' size='5' style='color: rgb(255, 255, 255); '>爱收藏</font>
 				</th>
 			</tr>
 			

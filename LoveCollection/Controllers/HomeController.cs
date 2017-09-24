@@ -25,29 +25,36 @@ namespace LoveCollection.Controllers
         {
             var userId = GetUserId();
 
-            ViewBag.Types = await _collectionDBCotext.Types
-                   .Where(t => t.UserId == userId)
-                   .OrderBy(t => t.Sort)
-                   .Select(t => new TypesOutput()
-                   {
-                       Id = t.Id,
-                       Name = t.Name
-                   })
-                   .ToListAsync();
+            if (userId > 0)
+            {
+                ViewBag.UserInfo = new UserInfoModel()
+                {
+                    UserMail = Request.Cookies.First(t => t.Key == "userName").Value
+                };
 
-            ViewBag.Collections = await _collectionDBCotext.Collections
-                   .Where(t => t.UserId == userId)
-                   .OrderBy(t => t.Sort)
-                   .Select(t => new CollectionOutput()
-                   {
-                       Id = t.Id,
-                       Sort = t.Sort,
-                       Title = t.Title,
-                       Url = t.Url,
-                       TypeId = t.TypeId
-                   })
-                   .ToListAsync();
+                ViewBag.Types = await _collectionDBCotext.Types
+                       .Where(t => t.UserId == userId)
+                       .OrderBy(t => t.Sort)
+                       .Select(t => new TypesOutput()
+                       {
+                           Id = t.Id,
+                           Name = t.Name
+                       })
+                       .ToListAsync();
 
+                ViewBag.Collections = await _collectionDBCotext.Collections
+                       .Where(t => t.UserId == userId)
+                       .OrderBy(t => t.Sort)
+                       .Select(t => new CollectionOutput()
+                       {
+                           Id = t.Id,
+                           Sort = t.Sort,
+                           Title = t.Title,
+                           Url = t.Url,
+                           TypeId = t.TypeId
+                       })
+                       .ToListAsync();
+            }
             return View();
         }
 
@@ -58,6 +65,27 @@ namespace LoveCollection.Controllers
                 return 0;
             var userIdString = EncryptDecryptExtension.DES3Decrypt(userIdCookie, DESKey);
             return int.Parse(userIdString);
+        }
+
+        /// <summary>
+        /// 关于
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult CheckLogin(string desstring)
+        {
+            return View();
+        }
+
+        public IActionResult LogOff()
+        {
+            Response.Cookies.Delete("userName");
+            Response.Cookies.Delete("userId");
+            return Redirect("/");
         }
 
         public IActionResult Error()

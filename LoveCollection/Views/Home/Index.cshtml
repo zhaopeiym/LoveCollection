@@ -2,7 +2,7 @@
 @using System.Text;
 @{
     ViewData["Title"] = "爱收藏";
-
+    var user = ViewBag.UserInfo as UserInfoModel;
 }
 
 <style type="text/css">
@@ -32,7 +32,7 @@
     }
 
     .displayNone {
-        display: none;
+        display: none !important;
     }
 
     .displayInlineBlock {
@@ -141,7 +141,7 @@
 
     .panel-title {
         /*margin-bottom: 3px;*/
-        color: #118850;
+        color: #FF6A01;
         font-weight: 600;
         /*background: #f6f6f6;*/
     }
@@ -197,26 +197,96 @@
     .a-url-address {
         word-wrap: break-word;
     }
+
+    .loginBlock {
+        margin: 3% auto;
+        display: table;
+        background: #fff;
+        padding: 40px;
+        border-radius: 4px;
+        box-shadow: 0 0 8px rgba(0,0,0,.1);
+        vertical-align: middle;
+    }
+
+        .loginBlock .loginTitle {
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 30px;
+            font-weight: 800;
+            color: #FF0001;
+        }
+
+        .loginBlock input[type="text"], input[type="password"] {
+            width: 300px;
+            height: 50px;
+            margin-bottom: 0px;
+            padding: 4px 12px 4px 35px;
+            background-color: hsla(0,0%,71%,.1);
+            vertical-align: middle;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .loginBlock .mail {
+            border: 1px solid #c8c8c8;
+            border-radius: 4px 4px 0 0;
+            border-bottom: 0px;
+        }
+
+        .loginBlock .passwod {
+            border: 1px solid #c8c8c8;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .loginBlock button {
+            margin-top: 30px;
+            width: 100%;
+            padding: 9px 18px;
+            font-size: 18px;
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            background: #42c02e;
+            cursor: pointer;
+            outline: none;
+            display: block;
+            clear: both;
+        }
 </style>
 
 <div class="content clearfix">
 
-    <div class="addtypeContent clearfix">
-        <div class="div-login displayNone">
-            <input type="text" placeholder="请输入您的邮箱" class="mail" />
-            <input type="password" placeholder="请输入您的密码" class="passwod" />
-            <button type="button" class="btn-register">登录</button>
-        </div>
-        <div class="div-logout">
-            <span class="userName"></span>
-            <a href="javascript:;" class="logout">退出登录</a>
-        </div>
+    <div class="addtypeContent clearfix">      
+        @if (user != null && !string.IsNullOrWhiteSpace(user.UserMail))
+        {
+            <div class="div-logout">
+                <span class="userName">@user.UserMail</span>
+                <a href="/Home/LogOff" class="logout">退出登录</a>
+            </div>
+        }
         <div>
             <input type="text" class="inp-type displayNone add-input-type" />
             <a href="javascript:;" class="btn-addtype add">新建分类</a>
-            <a href="/爱收藏.crx" style="margin-left:10px;color:#000000">【爱收藏】插件</a>
+            <a href="/Home/About" target="_blank" style="margin-left:10px;color:#000000">关于</a>
+            <a href="/爱收藏.crx" style="margin-left:10px;color:#000000">插件下载</a>
         </div>
     </div>
+
+    @if (user == null)
+    {
+        <div class=" loginBlock div-login">
+            <div class="loginTitle">登录 . 注册</div>
+            <div>
+                <input type="text" placeholder="请输入您的邮箱" class="mail" />
+            </div>
+            <div>
+                <input type="password" placeholder="请输入您的密码" class="passwod" />
+            </div>
+            <div>
+                <button type="button" class="btn-register" title="登录即注册">登录 / 注册</button>
+            </div>
+        </div>
+    }
     @{
         var types = ViewBag.Types as List<TypesOutput>;
         var collections = ViewBag.Collections as List<CollectionOutput>;
@@ -337,50 +407,29 @@
                             $("[data-typeId='" + typeId + "']").find(".div-block").prepend(tempHtml);
                         }
                     });
-                }
-                //加载类型
-                var loadType = function () {
-                    $.ajax({
-                        url: "/api/LoveCollection/GetTypes",
-                        success: function (sData) {
-                            var tempTitleHtml = "";
-                            for (var i = 0; i < sData.length; i++) {
-                                var data = sData[i];
-                                tempTitleHtml += _pageData.getTypeTitle(data.id, data.name);
-                            }
-
-                            $(".content").append(tempTitleHtml);
-
-                            for (var i = 0; i < sData.length; i++) {
-                                var data = sData[i];
-                                loadCollection(data.id);
-                            }
-                        }
-                    })
-                };
-                //loadType();
-                var method = this.method;
-                var userName = method.getCookie("userName");
-                var isLogin = method.getCookie("userId");
-                if (isLogin && userName) {//登录了
-                    $(".div-login").addClass("displayNone");
-                    $(".div-logout").removeClass("displayNone");
-                    $(".userName").text(userName);
-                    $(".logout").click(function () {
-                        method.delCookie("userId");
-                        location.reload(true);
-                    });
-                }
-                else {
-                    $(".div-logout").addClass("displayNone");
-                    $(".div-login").removeClass("displayNone");
-                    $(".mail").val(userName);
-                }
+                }              
+                //var method = this.method;
+                //var userName = method.getCookie("userName");
+                //var isLogin = method.getCookie("userId");
+                //if (isLogin && userName) {//登录了
+                //    $(".div-login").addClass("displayNone");
+                //    $(".div-logout").removeClass("displayNone");
+                //    $(".userName").text(userName);
+                //    $(".logout").click(function () {
+                //        method.delCookie("userId");
+                //        location.reload(true);
+                //    });
+                //}
+                //else {
+                //    $(".div-logout").addClass("displayNone");
+                //    $(".div-login").removeClass("displayNone");
+                //    $(".mail").val(userName);
+                //}
             },
             //事件绑定
             bindEvent: function () {
                 var $content = $(".content");
-                var dropObjTyepTyep = "";
+                var dropObjTyep;
                 var dropReceiveObj;
 
                 //新建分类
@@ -479,7 +528,7 @@
                     $(".type-block.highlight").removeClass("highlight");
                     var obj = $(event.target).closest("div.type-block");
                     obj.addClass("highlight");
-                    dropReceiveObj = obj;
+                    dropReceiveObj = { obj: obj, type: "typeBlock" };
                 });
                 //【url】拖动
                 $content.on("dragstart", ".a-url-address", function () {
@@ -490,12 +539,31 @@
                 });
                 //【url】设置可以接收拖动
                 $content.on("dragover", ".cell", function () {
-                    if (dropObjTyep !== "url") return;
+                    if (dropObjTyep !== "url")
+                        return;
+                    if ($(event.target).closest("div.cell").find(".span-edit.btn-new").length)
+                        return;//“新增”按钮不能被移动
+
                     event.preventDefault();
                     $(".cell.highlight").removeClass("highlight");
+                    $("div.div-block").removeClass("highlight");
                     var obj = $(event.target).closest("div.cell");
                     obj.addClass("highlight");
-                    dropReceiveObj = obj;
+                    dropReceiveObj = { obj: obj, type: "urlCell" };
+                });
+                //【url block】设置可以拖放
+                $content.on("dragover", ".div-block ", function () {
+                    if (dropObjTyep !== "url") return;
+                    var cell = $(event.target).closest(".div-block").find(".cell.highlight");
+                    if (cell.length && !cell.hasClass("moveobj")) {//如果当前块已经有被选中替换对象
+                        return;//
+                    }
+                    event.preventDefault();
+                    $(".cell.highlight").removeClass("highlight");
+                    $("div.div-block").removeClass("highlight");
+                    var obj = $(event.target).closest("div.div-block");
+                    obj.addClass("highlight");
+                    dropReceiveObj = { obj: obj, type: "urlBlock" };
                 });
                 //接收拖动数据
                 $("html").on("drop", function () {
@@ -505,18 +573,14 @@
                     var dropUrl = function () {
                         var urlId = event.dataTransfer.getData("Text");
                         var moveEle = $(".cell[data-id='" + urlId + "']");//正在移动的对象
-                        var receiveEle = $(dropReceiveObj).closest("div.cell");//准备与之换位的对象
+                        var receiveEle = $(dropReceiveObj.obj).closest("div.cell");//准备与之换位的对象
 
                         if (receiveEle.prev().data("id") === moveEle.data("id"))//如果本来就在对象的前面，则移到后面
                             receiveEle.after(moveEle);
                         else
                             receiveEle.before(moveEle);//移到对象的前面
 
-                        //$(moveEle).removeClass("moveobj").removeClass("highlight");
-                        //$(moveEle).prev().removeClass("highlight");
-                        //$(moveEle).next().removeClass("highlight");
                         var typeId = $(receiveEle).closest(".type-block").data("typeid");//类型id
-
                         $.ajax({
                             url: "/api/LoveCollection/ModifySort",
                             data: { "id": $(moveEle).data("id"), "typeId": typeId, "previd": $(moveEle).prev().data("id"), "nextid": $(moveEle).next().data("id") },
@@ -531,15 +595,12 @@
                     var dropUrlType = function () {
                         var typeId = event.dataTransfer.getData("Text");
                         var moveEle = $(".type-block[data-typeid='" + typeId + "']");//正在移动的对象
-                        var receiveEle = dropReceiveObj;//准备与之换位的对象
+                        var receiveEle = dropReceiveObj.obj;//准备与之换位的对象
 
                         if (receiveEle.prev().data("typeid") === moveEle.data("typeid"))//如果本来就在对象的前面，则移到后面
                             receiveEle.after(moveEle);
                         else
                             receiveEle.before(moveEle);//移到对象的前面
-                        //$(moveEle).removeClass("moveobj").removeClass("highlight");
-                        //$(moveEle).prev().removeClass("highlight");
-                        //$(moveEle).next().removeClass("highlight");
                         $.ajax({
                             url: "/api/LoveCollection/ModifyTypeSort",
                             data: { "id": $(moveEle).data("typeid"), "previd": $(moveEle).prev().data("typeid"), "nextid": $(moveEle).next().data("typeid") },
@@ -550,13 +611,33 @@
                         });
                     }
 
+                    //接收拖放数据【Url Block】
+                    var dropUrlBlock = function () {
+                        var urlId = event.dataTransfer.getData("Text");
+                        var moveEle = $(".cell[data-id='" + urlId + "']");//正在移动的对象
+                        $(dropReceiveObj.obj).find(".span-edit.btn-new").closest(".cell").before(moveEle);
+                        var typeId = $(dropReceiveObj.obj).closest(".type-block").data("typeid");//类型id
+
+                        $.ajax({
+                            url: "/api/LoveCollection/ModifySort",
+                            data: { "id": $(moveEle).data("id"), "typeId": typeId, "previd": $(moveEle).prev().data("id"), "nextid": $(moveEle).next().data("id") },
+                            type: "post",
+                            success: function (sData) {
+
+                            }
+                        })
+                    }
+
                     //接收拖动数据【url】
-                    if (dropReceiveObj.hasClass("cell")) {
+                    if (dropReceiveObj.type === "urlCell") {
                         dropUrl();
                     }
                     //接收拖动数据【类型】
-                    else if (dropReceiveObj.hasClass("type-block")) {
+                    else if (dropReceiveObj.type === "typeBlock") {
                         dropUrlType();
+                    }
+                    else if (dropReceiveObj.type === "urlBlock") {
+                        dropUrlBlock();
                     }
 
                     $(".highlight").removeClass("highlight");

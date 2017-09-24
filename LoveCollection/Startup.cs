@@ -11,6 +11,7 @@ using System.Text.Unicode;
 using Microsoft.Extensions.WebEncoders;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.StaticFiles;
+using Talk.Redis;
 
 namespace LoveCollection
 {
@@ -30,17 +31,11 @@ namespace LoveCollection
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.Configure<WebEncoderOptions>(options =>
-            //{
-            //    options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
-            //});
-
             services.AddMvc();
-
             //注意：一定要加 sslmode=none 
             connection = Configuration.GetConnectionString("MySqlConnection");        
+            RedisHelper.RedisConnection = Configuration.GetConnectionString("RedisConnection");
             services.AddDbContext<CollectionDBCotext>(options => options.UseMySql(connection));
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
