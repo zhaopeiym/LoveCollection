@@ -1,0 +1,50 @@
+﻿.loveCollectionType {
+    background: #fff;
+    position: fixed;
+    margin: 10% 30%;
+    padding: 15px;
+    padding-top: 20px;
+    border-radius: 4px;
+    top: 0px;
+    border: 1px solid rgba(42, 193, 251, 0.20);
+    -webkit-box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    box-shadow: 0 3px 9px rgba(0,0,0,.5);
+}
+
+    .loveCollectionType span {
+        margin: 5px;
+        margin-bottom: 3px;
+        margin-top: 3px;
+        display: inline-block;
+    }
+
+.div-save, .btn-cancel {
+    margin-left:15px;
+    margin-top: 10px;
+    border-top: 1px solid #dbdbdb;
+}
+
+.btn-save, .btn-cancel {
+    float: right;
+    margin-top: 8px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    color: #fff;
+    background: #0094ff;
+    display: block !important;
+    border-radius: 4px !important;
+    border: 1px solid #2ea5fb;
+    padding: 7px 14px;
+    outline: 0 !important;
+    background-image: none !important;
+    filter: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+.iradio_minimal-blue {
+    /*margin-top: -4px !important;*/
+    margin-right: 3px !important;
+}

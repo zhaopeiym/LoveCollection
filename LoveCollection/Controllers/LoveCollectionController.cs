@@ -12,6 +12,8 @@ using Newtonsoft.Json;
 using System.Web;
 using Microsoft.AspNetCore.Http;
 using Talk.Redis;
+using Microsoft.AspNetCore.Cors;
+using Serilog;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -119,8 +121,9 @@ namespace LoveCollection.Controllers
         /// <param name="url"></param>
         /// <param name="userToken"></param>
         /// <returns></returns>
+        [EnableCors("AllowSameDomain")]
         [HttpPost]
-        public async Task<object> AddCollectionByCRX(string url, string userToken = null)
+        public async Task<object> AddCollectionByCRX(string url, string userToken = null, int? typeId = null)
         {
             userToken = userToken == null ? null : HttpUtility.UrlDecode(userToken);
             var userId = GetUserId(userToken);
@@ -129,13 +132,16 @@ namespace LoveCollection.Controllers
             {
                 return string.Empty;
             }
-            var typeId = await _collectionDBCotext
-                .Types
-                .Where(t => t.UserId == userId)
-                .OrderBy(t => t.Sort)
-                .Select(t => t.Id)
-                .FirstOrDefaultAsync();
-            return await AddCollectionByUserAndType(url, userId, typeId);
+            if (!typeId.HasValue)
+            {
+                typeId = await _collectionDBCotext
+                   .Types
+                   .Where(t => t.UserId == userId)
+                   .OrderBy(t => t.Sort)
+                   .Select(t => t.Id)
+                   .FirstOrDefaultAsync();
+            }
+            return await AddCollectionByUserAndType(url, userId, typeId.Value);
         }
 
         /// <summary>
@@ -235,19 +241,31 @@ namespace LoveCollection.Controllers
         /// 获取类型集合
         /// </summary>
         /// <returns></returns>
+        [EnableCors("AllowSameDomain")]
         [HttpGet]
-        public async Task<List<TypesOutput>> GetTypes()
+        public async Task<List<TypesOutput>> GetTypes(string userToken = null)
         {
-            var userId = GetUserId();
-            return await _collectionDBCotext.Types
-                   .Where(t => t.UserId == userId)
-                   .OrderBy(t => t.Sort)
-                   .Select(t => new TypesOutput()
-                   {
-                       Id = t.Id,
-                       Name = t.Name
-                   })
-                   .ToListAsync();
+            try
+            {               
+                userToken = userToken == null ? null : HttpUtility.UrlDecode(userToken);
+                Log.Logger.Information(userToken);
+                var userId = GetUserId(userToken);
+                //var userId = GetUserId();
+                return await _collectionDBCotext.Types
+                       .Where(t => t.UserId == userId)
+                       .OrderBy(t => t.Sort)
+                       .Select(t => new TypesOutput()
+                       {
+                           Id = t.Id,
+                           Name = t.Name
+                       })
+                       .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex.Message);
+                throw;
+            }
         }
 
         /// <summary>

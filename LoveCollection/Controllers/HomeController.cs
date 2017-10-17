@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using LoveCollection.Models;
 using LoveCollection.Dto;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace LoveCollection.Controllers
 {
@@ -16,7 +17,7 @@ namespace LoveCollection.Controllers
         public static string DESKey { get; set; }
 
         public HomeController(CollectionDBCotext collectionDBCotext)
-        {
+        {          
             _collectionDBCotext = collectionDBCotext;
             if (string.IsNullOrWhiteSpace(DESKey))
                 DESKey = ConfigurationManager.GetSection("DESKey");

@@ -12,31 +12,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\爱收藏.crx" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.9.9" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
+    <PackageReference Include="Serilog.Sinks.Async" Version="1.1.0" />
+    <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
     <PackageReference Include="Talk.Redis" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\爱收藏.crx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="GeRenXing.OpenPlatform">
-      <HintPath>lib\GeRenXing.OpenPlatform.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
