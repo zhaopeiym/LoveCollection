@@ -27,4 +27,6 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties Tool_4爱收藏_4manifest_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
+
 </Project>

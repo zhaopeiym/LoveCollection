@@ -1,7 +1,8 @@
 ﻿.loveCollectionType {
     background: #fff;
     position: fixed;
-    margin: 10% 30%;
+    margin: 8% 30%;
+    width: 40%;
     padding: 15px;
     padding-top: 20px;
     border-radius: 4px;
@@ -9,7 +10,17 @@
     border: 1px solid rgba(42, 193, 251, 0.20);
     -webkit-box-shadow: 0 3px 9px rgba(0,0,0,.5);
     box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    z-index: 99999 !important;
+    text-align: left !important;
 }
+
+    .loveCollectionType * {
+        margin: 0px;
+        padding: 0px;
+        font-family: 'Microsoft YaHei', 'Helvetica Neue','Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif !important;
+        font-size: 18px;
+        color: rgba(39, 39, 39, 0.8);
+    }
 
     .loveCollectionType span {
         margin: 5px;
@@ -19,7 +30,7 @@
     }
 
 .div-save, .btn-cancel {
-    margin-left:15px;
+    margin-left: 15px;
     margin-top: 10px;
     border-top: 1px solid #dbdbdb;
 }
