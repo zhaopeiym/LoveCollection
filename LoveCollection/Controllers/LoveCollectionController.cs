@@ -247,7 +247,7 @@ namespace LoveCollection.Controllers
         {
             try
             {               
-                userToken = userToken == null ? null : HttpUtility.UrlDecode(userToken);
+                //userToken = userToken == null ? null : HttpUtility.UrlDecode(userToken);
                 Log.Logger.Information(userToken);
                 var userId = GetUserId(userToken);
                 //var userId = GetUserId();
@@ -449,6 +449,7 @@ namespace LoveCollection.Controllers
                     Expires = new DateTimeOffset(DateTime.Now.AddYears(1)),
                     HttpOnly = true
                 });
+            //这里好像做了自动url编码
             Response.Cookies.Append("userId", EncryptDecryptExtension.DES3Encrypt(user.Id.ToString(), DESKey),
                 new CookieOptions()
                 {
