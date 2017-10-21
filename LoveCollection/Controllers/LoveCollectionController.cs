@@ -195,11 +195,13 @@ namespace LoveCollection.Controllers
         /// <param name="title"></param>
         /// <returns></returns>
 
-        public async Task ModifyCollection(int id, string url, string title)
+        public async Task ModifyCollection(int id, string url, string title, int? typeId = null)
         {
             var collection = await _collectionDBCotext.Collections.Where(t => t.Id == id).FirstOrDefaultAsync();
             collection.Url = url;
             collection.Title = title;
+            if (typeId.HasValue)
+                collection.TypeId = typeId.Value;
             await _collectionDBCotext.SaveChangesAsync();
         }
 
@@ -245,27 +247,19 @@ namespace LoveCollection.Controllers
         [HttpGet]
         public async Task<List<TypesOutput>> GetTypes(string userToken = null)
         {
-            try
-            {               
-                //userToken = userToken == null ? null : HttpUtility.UrlDecode(userToken);
-                Log.Logger.Information(userToken);
-                var userId = GetUserId(userToken);
-                //var userId = GetUserId();
-                return await _collectionDBCotext.Types
-                       .Where(t => t.UserId == userId)
-                       .OrderBy(t => t.Sort)
-                       .Select(t => new TypesOutput()
-                       {
-                           Id = t.Id,
-                           Name = t.Name
-                       })
-                       .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                Log.Logger.Error(ex.Message);
-                throw;
-            }
+            //userToken = userToken == null ? null : HttpUtility.UrlDecode(userToken);
+            Log.Logger.Information(userToken);
+            var userId = GetUserId(userToken);
+            return await _collectionDBCotext.Types
+                   .Where(t => t.UserId == userId)
+                   .OrderBy(t => t.Sort)
+                   .Select(t => new TypesOutput()
+                   {
+                       Id = t.Id,
+                       Name = t.Name
+                   })
+                   .ToListAsync();
+            // Log.Logger.Error(ex.Message);
         }
 
         /// <summary>

@@ -27,6 +27,16 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\css\blue.css" />
+    <None Include="wwwroot\css\blue.png" />
+    <None Include="wwwroot\css\blue@2x.png" />
+    <None Include="wwwroot\css\toastr.2.1.3.css" />
+    <None Include="wwwroot\css\_all.css" />
+    <None Include="wwwroot\js\icheck.min.js" />
+    <None Include="wwwroot\js\toastr.min.2.1.3.js" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties Tool_4爱收藏_4manifest_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

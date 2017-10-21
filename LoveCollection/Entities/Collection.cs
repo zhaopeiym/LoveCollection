@@ -13,11 +13,10 @@ namespace LoveCollection.Entities
     public class Collection
     {
         public int Id { get; set; }
-        [MaxLength(300)]
+        [MaxLength(500)]
         public string Url { get; set; }
-        [MaxLength(200)]
+        [MaxLength(300)]
         public string Title { get; set; }
-
 
         public int TypeId { get; set; }
         /// <summary>
@@ -44,5 +43,14 @@ namespace LoveCollection.Entities
 
         [ForeignKey("UserId")]
         public User User { get; set; }
+
+        /// <summary>
+        /// 最后在线时间
+        /// </summary>
+        public DateTime LastOnlineTime { get; set; } = DateTime.Now;
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public DateTime CreationTime { get; set; } = DateTime.Now;
     }
 }

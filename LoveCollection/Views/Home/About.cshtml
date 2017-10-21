@@ -8,16 +8,45 @@
 
     .divrow {
         margin-bottom: 15px;
+        border: 1px dashed #cccccc;
+        padding: 5px;
+    }
+
+    .messg {
+        color: red;
+        margin-left: 8px;
+        font-size: 12px;    
+    }
+
+    .displayNone {
+        display: none;
+    }
+
+    .importBookmark-div {
+        border: 1px dashed red;
     }
 </style>
 <div style="margin-top:30px">
-    <div class="divrow">
-        <a href="/爱收藏.crx">本地下载安装</a>
+    <div class="divrow importBookmark-div">
+        <form asp-action="ImportBookmark"
+              asp-controller="Home"
+              method="post"
+              enctype="multipart/form-data">
+            <span>导入收藏夹：</span>
+            <input type="file" name="file" />
+            <input type="submit" value="导入" onclick="Import()" />
+            <span class="messg">(必须为浏览器导出的html格式的书签文件)</span>
+        </form>
     </div>
     <div class="divrow">
-        <a href="https://ext.chrome.360.cn/webstore/search/%E7%88%B1%E6%94%B6%E8%97%8F">360极速浏览器收录地址下载</a>
-        <a href="https://ext.se.360.cn/webstore/search/%E7%88%B1%E6%94%B6%E8%97%8F">360安全浏览器收录地址下载</a>
-        <a href="https://chrome.google.com/webstore/detail/%E3%80%90%E7%88%B1%E6%94%B6%E8%97%8F%E3%80%91/eiapenphalkjcggadkpheffmbdcmgile?hl=zh-CN">chrome浏览器收录地址下载</a>
+        <div class="" style="margin-bottom:5px">
+            <a href="/爱收藏.crx">本地下载安装</a>
+        </div>
+        <div>
+            <a href="https://ext.chrome.360.cn/webstore/search/%E7%88%B1%E6%94%B6%E8%97%8F">360极速浏览器收录地址下载</a>
+            <a href="https://ext.se.360.cn/webstore/search/%E7%88%B1%E6%94%B6%E8%97%8F">360安全浏览器收录地址下载</a>
+            <a href="https://chrome.google.com/webstore/detail/%E3%80%90%E7%88%B1%E6%94%B6%E8%97%8F%E3%80%91/eiapenphalkjcggadkpheffmbdcmgile?hl=zh-CN">chrome浏览器收录地址下载</a>
+        </div>
     </div>
     <div class="divrow">
         <a href="https://github.com/zhaopeiym/LoveCollection/issues">问题、建议和意见</a>
@@ -29,3 +58,10 @@
         </div>
     </div>
 </div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript">
+    function Import() {
+        $(".messg").html("正在导入中,请稍候...");
+    }
+</script>

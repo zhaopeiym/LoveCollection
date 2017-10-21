@@ -1,0 +1,323 @@
+﻿
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    font-size: 18px;
+}
+
+.clearfix:before, .clearfix:after {
+    content: "";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+    overflow: hidden;
+}
+
+.clearfix {
+    zoom: 1; /* for ie6 & ie7 */
+}
+
+.red {
+    color: red;
+}
+
+.displayNone {
+    display: none !important;
+}
+
+.displayInlineBlock {
+    display: inline-block
+}
+
+html {
+    background: #F2F4F7;
+}
+
+.visibilityHidden {
+    visibility: hidden;
+}
+
+.content {
+    /*border: 1px dashed #0094ff;*/
+    margin-top: 15px;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+    .content * {
+        font-style: normal;
+        font-variant: normal;
+        /*font-weight: normal;*/
+        font-stretch: normal;
+        font-size: 14px;
+        line-height: 100%;
+        font-family: arial, 'Hiragino Sans GB', 'Hiragino Sans GB W3', 宋体;
+    }
+
+    .content a {
+        display: inline-block;
+        display: -webkit-inline-box;
+        padding: 2px;
+        text-decoration: none;
+    }
+
+        .content a.a-url-address {
+            color: #335566;
+            /*background: #E3F2F7;*/
+            /*border: 1px dashed #d1e1e6;*/
+            /*border: 1px dashed #88969b;*/
+            border-radius: 5px;
+            background-color: #eef6f8;
+            text-decoration: none;
+        }
+
+        .content a:hover {
+            color: red;
+            text-decoration: underline;
+        }
+
+    .content .div-block {
+        border-top: 1px solid #D9D9D9;
+        padding-left: 2px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        /*border: 1px solid #f6f6f6;
+            background:#fff;*/
+    }
+
+    .content .type-block {
+        /*padding: 2px;*/
+        margin-bottom: 10px;
+        border: 1px solid #DEE3EB;
+        background: #fff;
+    }
+
+    .content .cell {
+        float: left;
+        /*width: 25%;*/
+        margin-right: 5px;
+        border: 1px dashed #ffffff;
+    }
+
+        .content .cell div {
+            /*border: 1px dashed #faf4f0;*/
+            /*margin-top: 3px;*/
+            margin-bottom: 3px;
+            /*height: 25px;*/
+        }
+
+.highlight {
+    border: 1px dashed red !important;
+}
+
+.moveobj {
+    border: 1px dashed #808080;
+    opacity: 0.3;
+}
+
+.btn-addtype {
+}
+
+.addtypeContent div {
+    text-align: right;
+    margin-bottom: 15px;
+    width: 100%;
+    color: #0094ff;
+}
+
+.addtypeContent a {
+    color: #ff6a00;
+}
+
+.panel-title {
+    /*margin-bottom: 3px;*/
+    color: #FF6A01;
+    font-weight: 600;
+    /*background: #f6f6f6;*/
+}
+
+    .panel-title span {
+        padding-right: 10px;
+        padding-left: 5px;
+        padding-top: 10px;
+    }
+
+input[type="text"], input[type="password"] {
+    border: 0px;
+    border-bottom: 1px dashed #808080;
+    outline: medium;
+    padding-bottom: 2px;
+    background: #F2F4F7;
+}
+
+.div-edit {
+    /*padding-top: 2px;*/
+    /*padding-bottom: 2px;*/
+    /*margin-top: 5px;*/
+}
+
+.btn-new {
+    padding-top: 5px;
+}
+
+.span-edit {
+    /*margin-right: 10px;*/
+    margin-right: 2px;
+    cursor: default;
+    color: #ff6a00;
+}
+
+.btn-edit {
+    /*margin-right: 5px;*/
+}
+
+.span-edit input {
+    /*width: 90%;*/
+    width: 250px;
+}
+
+.div-edit img {
+    vertical-align: bottom;
+}
+
+.logout {
+    margin-left: 8px;
+}
+
+.a-url-address {
+    word-wrap: break-word;
+}
+
+.loginBlock {
+    margin: 3% auto;
+    display: table;
+    background: #fff;
+    padding: 40px;
+    border-radius: 4px;
+    box-shadow: 0 0 8px rgba(0,0,0,.1);
+    vertical-align: middle;
+}
+
+    .loginBlock .loginTitle {
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 30px;
+        font-weight: 800;
+        color: #FF0001;
+    }
+
+    .loginBlock input[type="text"], input[type="password"] {
+        width: 300px;
+        height: 50px;
+        margin-bottom: 0px;
+        padding: 4px 12px 4px 35px;
+        background-color: hsla(0,0%,71%,.1);
+        vertical-align: middle;
+        outline: none;
+        font-size: 16px;
+    }
+
+    .loginBlock .mail {
+        border: 1px solid #c8c8c8;
+        border-radius: 4px 4px 0 0;
+        border-bottom: 0px;
+    }
+
+    .loginBlock .passwod {
+        border: 1px solid #c8c8c8;
+        border-radius: 0 0 4px 4px;
+    }
+
+    .loginBlock button {
+        margin-top: 30px;
+        width: 100%;
+        padding: 9px 18px;
+        font-size: 18px;
+        border: none;
+        border-radius: 25px;
+        color: #fff;
+        background: #42c02e;
+        cursor: pointer;
+        outline: none;
+        display: block;
+        clear: both;
+    }
+
+.modal {
+    background: #fff;
+    position: fixed;
+    margin: 8% 30%;
+    width: 40%;
+    padding: 15px;
+    padding-top: 20px;
+    border-radius: 4px;
+    top: 0px;
+    border: 1px solid rgba(128, 128, 128,0.2);
+    -webkit-box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    box-shadow: 0 3px 9px rgba(0,0,0,.5);
+    z-index: 99999 !important;
+    text-align: left !important;
+}
+
+    .modal .collectionContent input {
+        display: block;
+        width: 100%;
+        height: 40px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    }
+
+        .modal .collectionContent input.url {
+            margin-bottom: 5px;
+        }
+
+    .modal button {
+        margin-left: 15px;
+        border-top: 1px solid #dbdbdb;
+        float: right;
+        margin-top: 8px;
+        margin-right: 0px;
+        margin-bottom: 0px;
+        color: #fff;
+        background: #0094ff;
+        display: block !important;
+        border-radius: 4px !important;
+        border: 1px solid #2ea5fb;
+        padding: 7px 14px;
+        outline: 0 !important;
+        background-image: none !important;
+        filter: none;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+        text-shadow: none;
+    }
+
+    .modal .collectionTypes {
+        margin-bottom: 15px;
+    }
+
+        .modal .collectionTypes span {
+            display:inline-block;
+            margin-bottom:4px;
+            color: #808080;
+            margin-left: 8px;
+        }
+
+    .modal .iradio_minimal-blue {
+        margin-top: -5px;
+    }

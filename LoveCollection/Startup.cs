@@ -15,6 +15,7 @@ using Talk.Redis;
 using Serilog;
 using Serilog.Events;
 using Microsoft.Extensions.Logging;
+using LoveCollection.Application;
 
 namespace LoveCollection
 {
@@ -36,6 +37,8 @@ namespace LoveCollection
         {
             // 日志配置
             LogConfig();
+
+            services.AddScoped(typeof(LoveCollectionAppService), typeof(LoveCollectionAppService));
 
             #region 跨域
             //var urls = Configuration["AppConfig:Cores"].Split(',');
