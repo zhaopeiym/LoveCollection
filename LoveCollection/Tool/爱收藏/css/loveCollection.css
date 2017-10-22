@@ -18,15 +18,24 @@
         margin: 0px;
         padding: 0px;
         font-family: 'Microsoft YaHei', 'Helvetica Neue','Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif !important;
-        font-size: 18px;
-        color: rgba(39, 39, 39, 0.8);
+        font-size: 17px;
+        color: #335566;
+    }
+
+    .loveCollectionType .iradio_minimal-blue {
+        margin-top: -4px;
+        margin-right: 3px !important;
     }
 
     .loveCollectionType span {
-        margin: 5px;
-        margin-bottom: 3px;
-        margin-top: 3px;
         display: inline-block;
+        margin-bottom: 4px;
+        margin-left: 8px;
+    }
+
+    .loveCollectionType .a-addType {
+        color: red;
+        margin-left: 5px;
     }
 
 .div-save, .btn-cancel {
@@ -57,5 +66,5 @@
 
 .iradio_minimal-blue {
     /*margin-top: -4px !important;*/
-    margin-right: 3px !important;
+    /*margin-right: 3px !important;*/
 }

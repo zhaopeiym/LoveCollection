@@ -6,4 +6,13 @@
 </style>
 <div style="margin-top:30px;font-size:32px;color:red;text-align:center">
     恭喜您，导入成功~
+    <a href="/">5秒后跳转到主页</a>
 </div>
+
+<script type="text/javascript">
+    window.onload = function () {
+        setTimeout(function () {
+            location.href = "/";
+        }, 5000);
+    }
+</script>

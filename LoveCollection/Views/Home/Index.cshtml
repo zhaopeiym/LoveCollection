@@ -8,7 +8,7 @@
 <link href="~/css/Index.css" rel="stylesheet" />
 <link href="~/css/_all.css" rel="stylesheet" />
 <style type="text/css">
-  
+
 </style>
 
 <div class="content clearfix">
@@ -25,7 +25,7 @@
             <input type="text" class="inp-type displayNone add-input-type" />
             <a href="javascript:;" class="btn-addtype add">新建分类</a>
             <a href="/Home/About" target="_blank" style="margin-left:10px;color:#000000">关于</a>
-            <a href="/Home/About" style="margin-left:10px;color:#000000">插件下载</a>
+            <a href="/Home/About" style="margin-left:10px;color:#000000">导入收藏夹</a>
         </div>
     </div>
 
@@ -45,41 +45,9 @@
         </div>
     }
     @{
-        var types = ViewBag.Types as List<TypesOutput>;
-        var collections = ViewBag.Collections as List<CollectionOutput>;
-        if (types != null && types.Count > 0)
-        {
-            foreach (var type in types)
-            {
-                <div class="type-block" data-typeid="@type.Id">
-                    <div data-id="@type.Id" class="panel-title">
-                        <span draggable="true">@type.Name</span>
-                        <a class="btn-type-edit visibilityHidden"><img src="/images/edit.png" /></a>
-                        <a class="btn-type-del visibilityHidden"><img src="/images/Delete.png" /></a>
-                    </div>
-                    <div class="div-block clearfix">
-                        @foreach (var item in collections.Where(t => t.TypeId == type.Id))
-                        {
-                            <div class="cell" data-id="@item.Id">
-                                <div class="div-edit">
-                                    <span class="span-edit">
-                                        <a class="a-url-address" draggable="true" title="@item.Title"
-                                           href="@item.Url">@(item.Title.Trim())</a>
-                                    </span>
-                                    <a class="btn-edit visibilityHidden"><img src="/images/edit.png" /></a>
-                                    <a class="btn-del visibilityHidden"><img src="/images/Delete.png" /></a>
-                                </div>
-                            </div>
-                        }
-                        <div class="cell">
-                            <div class="div-edit">
-                                <span class="span-edit btn-new displayNone">新增</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-        }
+        <div class="collectionDetailedInfo">
+
+        </div>       
     }
 
     @*<div class="panel-title">常用链接</div><div class="div-block clearfix diyCollection"></div>*@
@@ -103,6 +71,51 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/js/toastr.min.2.1.3.js"></script>
 <script src="~/js/icheck.min.js"></script>
-<script src="~/js/Index.js"></script>
-<script type="text/javascript">  
+<script type="text/javascript">
+    //1、通过试图传递数据（减少请求）
+    //2、通过js动态组装（减小请求内容）
+    //这里的优化，从请求需要3秒多 提升到了 200毫秒不到
+    var types = @(Html.Raw(ViewBag.Types));
+    var collections = @(Html.Raw(ViewBag.Collections));
+    if (types) {
+        var tempHtml = "";
+        for (var i = 0; i < types.length; i++) {
+            var type = types[i];
+            tempHtml += '<div class="type-block" data-typeid="' + type.Id+'">\
+                    <div data-id="' + type.Id+'" class="panel-title">\
+                        <span draggable="true">' + type.Name+'</span>\
+                        <a class="btn-type-edit visibilityHidden"><img src="/images/edit.png" /></a>\
+                        <a class="btn-type-del visibilityHidden"><img src="/images/Delete.png" /></a>\
+                    </div>\
+                    <div class="div-block clearfix">'; 
+            var cellTempHtml = "";
+            for (var j = 0; j < collections.length; j++) {
+                var collection = collections[j];
+                if (collection.TypeId == type.Id)
+                {
+                    cellTempHtml += ' <div class="cell" data-id="' + collection.Id+'">\
+                            <div class="div-edit">\
+                                <span class="span-edit">\
+                                    <a class="a-url-address" draggable="true" title="'+ collection.Title+'"\
+                                       href="'+ collection.Url + '">' + collection.Title+'</a>\
+                                </span>\
+                                <a class="btn-edit visibilityHidden"><img src="/images/edit.png" /></a>\
+                                <a class="btn-del visibilityHidden"><img src="/images/Delete.png" /></a>\
+                            </div>\
+                        </div>';
+                }
+            }
+            tempHtml += cellTempHtml;
+            tempHtml +=     '<div class="cell">\
+                            <div class="div-edit">\
+                                <span class="span-edit btn-new displayNone">新增</span>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>';
+        }
+        $(".collectionDetailedInfo").html(tempHtml);
+    }
 </script>
+<script src="~/js/Index.js?v=20171022"></script>
+

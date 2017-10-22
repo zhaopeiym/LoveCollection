@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "【爱收藏】",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "爱收藏",
   "icons": {
     "16": "img/collection_16.png",

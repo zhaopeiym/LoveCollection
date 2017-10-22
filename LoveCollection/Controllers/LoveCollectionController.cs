@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Talk.Redis;
 using Microsoft.AspNetCore.Cors;
 using Serilog;
+using LoveCollection.Application;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,48 +26,43 @@ namespace LoveCollection.Controllers
     {
         public static string DESKey { get; set; }
         private readonly CollectionDBCotext _collectionDBCotext;
-        public LoveCollectionController(CollectionDBCotext collectionDBCotext)
+        private readonly LoveCollectionAppService loveCollectionAppService;
+        public LoveCollectionController(CollectionDBCotext collectionDBCotext, LoveCollectionAppService loveCollectionAppService)
         {
             _collectionDBCotext = collectionDBCotext;
+            this.loveCollectionAppService = loveCollectionAppService;
             if (string.IsNullOrWhiteSpace(DESKey))
                 DESKey = ConfigurationManager.GetSection("DESKey");
         }
 
+        #region 注释
         /// <summary>
         /// 获取内容集合根据类型id
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        public async Task<List<CollectionOutput>> GetCollectionByTypeId(int typeId)
-        {
-            var userId = GetUserId();
-            return await _collectionDBCotext.Collections
-                   .Where(t => t.UserId == userId && t.TypeId == typeId)
-                   .OrderBy(t => t.Sort)
-                   .Select(t => new CollectionOutput()
-                   {
-                       Id = t.Id,
-                       Sort = t.Sort,
-                       Title = t.Title,
-                       Url = t.Url
-                   })
-                   .ToListAsync();
-        }
+        //[HttpGet]
+        //public async Task<List<CollectionOutput>> GetCollectionByTypeId(int typeId)
+        //{
+        //    var userId = GetUserId();
+        //    return await _collectionDBCotext.Collections
+        //           .Where(t => t.UserId == userId && t.TypeId == typeId)
+        //           .OrderBy(t => t.Sort)
+        //           .Select(t => new CollectionOutput()
+        //           {
+        //               Id = t.Id,
+        //               Sort = t.Sort,
+        //               Title = t.Title,
+        //               Url = t.Url
+        //           })
+        //           .ToListAsync();
+        //} 
+        #endregion
 
+        //获取所有的收藏
         public async Task<List<CollectionOutput>> GetCollections()
         {
             var userId = GetUserId();
-            return await _collectionDBCotext.Collections
-                   .Where(t => t.UserId == userId)
-                   .OrderBy(t => t.Sort)
-                   .Select(t => new CollectionOutput()
-                   {
-                       Id = t.Id,
-                       Sort = t.Sort,
-                       Title = t.Title,
-                       Url = t.Url
-                   })
-                   .ToListAsync();
+            return await loveCollectionAppService.GetAllCollectionAsync(userId);
         }
 
         /// <summary>
@@ -79,24 +75,32 @@ namespace LoveCollection.Controllers
         [HttpPost]
         public async Task ModifySort(int id, int typeId, int nextid, int previd)
         {
-            var collection = await _collectionDBCotext.Collections.Where(t => t.Id == id).FirstOrDefaultAsync();
+            var userId = GetUserId();
+            var collection = await loveCollectionAppService.GetCollectionByIdAsync(userId, id);
             if (nextid == 0 && previd != 0)//最后面
             {
-                var tempSort = await _collectionDBCotext.Collections.Where(t => t.Id == previd).Select(t => t.Sort).FirstAsync();
+                var tempSort = await loveCollectionAppService.CollectionQuery(userId)
+                    .Where(t => t.Id == previd).Select(t => t.Sort).FirstAsync();
                 collection.Sort = tempSort + 1;
             }
             else if (nextid != 0 && previd == 0)//最前面
             {
-                var tempSort = await _collectionDBCotext.Collections.Where(t => t.Id == nextid).Select(t => t.Sort).FirstAsync();
+                var tempSort = await loveCollectionAppService.CollectionQuery(userId)
+                    .Where(t => t.Id == nextid).Select(t => t.Sort).FirstAsync();
                 collection.Sort = tempSort / 2;
             }
             else
             {
-                var sort = await _collectionDBCotext.Collections.Where(t => t.Id == nextid || t.Id == previd).SumAsync(t => t.Sort);
-                collection.Sort = sort / 2;
+                var sort = await loveCollectionAppService.CollectionQuery(userId)
+                    .Where(t => t.Id == nextid || t.Id == previd).SumAsync(t => t.Sort);
+                if (sort == 0)
+                    collection.Sort = 1024;
+                else
+                    collection.Sort = sort / 2;
             }
             collection.TypeId = typeId;
-            await _collectionDBCotext.SaveChangesAsync();
+            await loveCollectionAppService.SaveChangesAsync();
+            await loveCollectionAppService.UpdateAllCollectionToRedisAsync(userId);
         }
 
         /// <summary>
@@ -108,10 +112,8 @@ namespace LoveCollection.Controllers
         public async Task<object> AddCollection(string url, int typeId)
         {
             var userId = GetUserId();
-            if (await _collectionDBCotext.Collections.Where(t => t.UserId == userId).AnyAsync(t => t.Url == url))
-            {
+            if (await loveCollectionAppService.CollectionQuery(userId).AnyAsync(t => t.Url == url))
                 return string.Empty;
-            }
             return await AddCollectionByUserAndType(url, userId, typeId);
         }
 
@@ -127,21 +129,26 @@ namespace LoveCollection.Controllers
         {
             userToken = userToken == null ? null : HttpUtility.UrlDecode(userToken);
             var userId = GetUserId(userToken);
-            if (await _collectionDBCotext.Collections
-                .Where(t => t.UserId == userId).AnyAsync(t => t.Url == url))
+            var collection = await loveCollectionAppService.CollectionQuery(userId).Where(t => t.Url == url).FirstOrDefaultAsync();
+            if (collection != null)
             {
+                if (typeId.HasValue)
+                    collection.TypeId = typeId.Value;
+                await loveCollectionAppService.SaveChangesAsync();
+                await loveCollectionAppService.UpdateAllCollectionToRedisAsync(userId);
                 return string.Empty;
             }
+            //if (await loveCollectionAppService.CollectionQuery(userId).AnyAsync(t => t.Url == url))
+            //    return string.Empty;
             if (!typeId.HasValue)
             {
-                typeId = await _collectionDBCotext
-                   .Types
-                   .Where(t => t.UserId == userId)
+                typeId = await loveCollectionAppService.TypeQuery(userId)
                    .OrderBy(t => t.Sort)
                    .Select(t => t.Id)
                    .FirstOrDefaultAsync();
             }
-            return await AddCollectionByUserAndType(url, userId, typeId.Value);
+            var obj = await AddCollectionByUserAndType(url, userId, typeId.Value);
+            return obj;
         }
 
         /// <summary>
@@ -166,24 +173,19 @@ namespace LoveCollection.Controllers
                 catch (Exception) { }
                 title = title.Split('-')[0];
                 var sort = 0.0;
-                if (await _collectionDBCotext.Collections.AnyAsync(t => t.UserId == userId))
-                    sort = await _collectionDBCotext.Collections
-                        .Where(t => t.UserId == userId)
-                        .MaxAsync(t => t.Sort);
-                var urlObj = _collectionDBCotext.Collections.Add(new Collection()
+                if (await loveCollectionAppService.CollectionQuery(userId).AnyAsync())
+                    sort = await loveCollectionAppService.CollectionQuery(userId).MaxAsync(t => t.Sort);
+                var collection = new Collection()
                 {
                     Url = url,
                     Title = title,
                     UserId = userId,
                     TypeId = typeId,
                     Sort = sort + 1024
-                });
-                await _collectionDBCotext.SaveChangesAsync();
-                return new
-                {
-                    id = urlObj.Entity.Id,
-                    title = title,
                 };
+                var obj = await loveCollectionAppService.AddCollection(collection);
+                await loveCollectionAppService.UpdateAllCollectionToRedisAsync(userId);
+                return obj;
             }
         }
 
@@ -197,12 +199,33 @@ namespace LoveCollection.Controllers
 
         public async Task ModifyCollection(int id, string url, string title, int? typeId = null)
         {
-            var collection = await _collectionDBCotext.Collections.Where(t => t.Id == id).FirstOrDefaultAsync();
+            var userId = GetUserId();
+            var collection = await loveCollectionAppService.CollectionQuery(userId)
+                .Where(t => t.Id == id)
+                .FirstOrDefaultAsync();
             collection.Url = url;
             collection.Title = title;
             if (typeId.HasValue)
                 collection.TypeId = typeId.Value;
             await _collectionDBCotext.SaveChangesAsync();
+            await loveCollectionAppService.UpdateAllCollectionToRedisAsync(userId);
+        }
+
+        /// <summary>
+        /// 获取url的类型id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        [EnableCors("AllowSameDomain")]
+        public async Task<int> GetTypeIdByByUrlCRX(string url, string userToken = null)
+        {
+            var userId = GetUserId(userToken);
+            int typeId = await loveCollectionAppService.CollectionQuery(userId)
+                .Where(t => t.Url == url)
+                .Select(t => t.TypeId)
+                .FirstOrDefaultAsync();
+            return typeId;
         }
 
         /// <summary>
@@ -212,9 +235,15 @@ namespace LoveCollection.Controllers
         /// <returns></returns>
         public async Task DelCollection(int id)
         {
-            var collection = await _collectionDBCotext.Collections.Where(t => t.Id == id).FirstOrDefaultAsync();
+            var userId = GetUserId();
+            var collection = await loveCollectionAppService.CollectionQuery(userId)
+                .Where(t => t.Id == id)
+                .FirstOrDefaultAsync();
+            //_collectionDBCotext.Collections.Where(t => t.Id == id).FirstOrDefaultAsync();
             _collectionDBCotext.Entry(collection).State = EntityState.Deleted;
             await _collectionDBCotext.SaveChangesAsync();
+            await loveCollectionAppService.UpdateAllCollectionToRedisAsync(userId);
+
         }
 
         /// <summary>
@@ -223,12 +252,13 @@ namespace LoveCollection.Controllers
         /// <param name="name"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<int> AddType(string name)
+        [EnableCors("AllowSameDomain")]
+        public async Task<int> AddType(string name, string userToken = null)
         {
-            var userId = GetUserId();
+            var userId = GetUserId(userToken);
             var typeSort = 0.0;
-            if (await _collectionDBCotext.Types.AnyAsync(t => t.UserId == userId))
-                typeSort = await _collectionDBCotext.Types.Where(t => t.UserId == userId).MaxAsync(t => t.Sort);
+            if (await loveCollectionAppService.TypeQuery(userId).AnyAsync())
+                typeSort = await loveCollectionAppService.TypeQuery(userId).MaxAsync(t => t.Sort);
             var type = _collectionDBCotext.Types.Add(new Entities.Type()
             {
                 Name = name,
@@ -236,6 +266,7 @@ namespace LoveCollection.Controllers
                 Sort = typeSort + 1024
             });
             await _collectionDBCotext.SaveChangesAsync();
+            await loveCollectionAppService.UpdateAllTypeToRedisAsync(userId);
             return type.Entity.Id;
         }
 
@@ -247,19 +278,8 @@ namespace LoveCollection.Controllers
         [HttpGet]
         public async Task<List<TypesOutput>> GetTypes(string userToken = null)
         {
-            //userToken = userToken == null ? null : HttpUtility.UrlDecode(userToken);
-            Log.Logger.Information(userToken);
             var userId = GetUserId(userToken);
-            return await _collectionDBCotext.Types
-                   .Where(t => t.UserId == userId)
-                   .OrderBy(t => t.Sort)
-                   .Select(t => new TypesOutput()
-                   {
-                       Id = t.Id,
-                       Name = t.Name
-                   })
-                   .ToListAsync();
-            // Log.Logger.Error(ex.Message);
+            return await loveCollectionAppService.GetAllTypeAsync(userId);
         }
 
         /// <summary>
@@ -270,8 +290,11 @@ namespace LoveCollection.Controllers
         /// <returns></returns>
         public async Task ModifyTypeNameById(int typeId, string typeName)
         {
-            (await _collectionDBCotext.Types.Where(t => t.Id == typeId).FirstAsync()).Name = typeName;
+            var userId = GetUserId();
+            (await loveCollectionAppService.TypeQuery(userId).Where(t => t.Id == typeId).FirstAsync()).Name = typeName;
+            //_collectionDBCotext.Types.Where(t => t.Id == typeId).FirstAsync()).Name = typeName;
             await _collectionDBCotext.SaveChangesAsync();
+            await loveCollectionAppService.UpdateAllTypeToRedisAsync(userId);
         }
 
 
@@ -284,24 +307,26 @@ namespace LoveCollection.Controllers
         /// <returns></returns>
         public async Task ModifyTypeSort(int id, int nextid, int previd)
         {
-            var collection = await _collectionDBCotext.Types.Where(t => t.Id == id).FirstOrDefaultAsync();
+            var userId = GetUserId();
+            var collection = await loveCollectionAppService.TypeQuery(userId).Where(t => t.Id == id).FirstOrDefaultAsync();
             if (nextid == 0 && previd != 0)//最下面
             {
-                var tempSort = await _collectionDBCotext.Types.Where(t => t.Id == previd).Select(t => t.Sort).FirstAsync();
+                var tempSort = await loveCollectionAppService.TypeQuery(userId).Where(t => t.Id == previd).Select(t => t.Sort).FirstAsync();
                 collection.Sort = tempSort + 1;
             }
             else if (nextid != 0 && previd == 0)//最上面
             {
-                var tempSort = await _collectionDBCotext.Types.Where(t => t.Id == nextid).Select(t => t.Sort).FirstAsync();
+                var tempSort = await loveCollectionAppService.TypeQuery(userId).Where(t => t.Id == nextid).Select(t => t.Sort).FirstAsync();
                 collection.Sort = tempSort / 2;
             }
             else
             {
-                var sort = await _collectionDBCotext.Types.Where(t => t.Id == nextid || t.Id == previd).SumAsync(t => t.Sort);
+                var sort = await loveCollectionAppService.TypeQuery(userId).Where(t => t.Id == nextid || t.Id == previd).SumAsync(t => t.Sort);
                 collection.Sort = sort / 2;
             }
 
             await _collectionDBCotext.SaveChangesAsync();
+            await loveCollectionAppService.UpdateAllTypeToRedisAsync(userId);
         }
 
         /// <summary>
@@ -312,16 +337,18 @@ namespace LoveCollection.Controllers
         public async Task DelType(int typeId)
         {
             var userId = GetUserId();
-            var collections = await _collectionDBCotext.Collections.Where(t => t.UserId == userId && t.TypeId == typeId).ToListAsync();
+            var collections = await loveCollectionAppService.CollectionQuery(userId).Where(t => t.UserId == userId && t.TypeId == typeId).ToListAsync();
             foreach (var collection in collections)
             {
                 _collectionDBCotext.Entry(collection).State = EntityState.Deleted;
             }
 
-            var type = await _collectionDBCotext.Types.Where(t => t.Id == typeId).FirstOrDefaultAsync();
+            var type = await loveCollectionAppService.TypeQuery(userId).Where(t => t.Id == typeId).FirstOrDefaultAsync();
             _collectionDBCotext.Entry(type).State = EntityState.Deleted;
 
             await _collectionDBCotext.SaveChangesAsync();
+            await loveCollectionAppService.UpdateAllTypeToRedisAsync(userId);
+
         }
 
         /// <summary>

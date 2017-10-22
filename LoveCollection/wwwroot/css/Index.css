@@ -311,13 +311,25 @@ input[type="text"], input[type="password"] {
         margin-bottom: 15px;
     }
 
-        .modal .collectionTypes span {
-            display:inline-block;
-            margin-bottom:4px;
-            color: #808080;
-            margin-left: 8px;
-        }
+    .modal * {
+        margin: 0px;
+        padding: 0px;
+        font-family: 'Microsoft YaHei', 'Helvetica Neue','Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif !important;
+        color: #335566;
+    }
+
+    .modal .collectionTypes span {
+        display: inline-block;
+        margin-bottom: 4px;
+        font-size: 17px;
+        margin-left: 8px;
+    }
 
     .modal .iradio_minimal-blue {
-        margin-top: -5px;
+        margin-top: -4px;
+        margin-right: 3px !important;
+    }
+    .modal .a-addType {
+        color: red;
+        margin-left: 5px;
     }

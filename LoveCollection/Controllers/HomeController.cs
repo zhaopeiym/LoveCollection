@@ -15,18 +15,18 @@ using System.IO;
 using System.Text;
 using AngleSharp.Parser.Html;
 using LoveCollection.Application;
+using Newtonsoft.Json;
 
 namespace LoveCollection.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly CollectionDBCotext _collectionDBCotext;
+
         private readonly LoveCollectionAppService loveCollectionAppService;
         public static string DESKey { get; set; }
 
-        public HomeController(CollectionDBCotext collectionDBCotext, LoveCollectionAppService loveCollectionAppService)
+        public HomeController(LoveCollectionAppService loveCollectionAppService)
         {
-            _collectionDBCotext = collectionDBCotext;
             this.loveCollectionAppService = loveCollectionAppService;
             if (string.IsNullOrWhiteSpace(DESKey))
                 DESKey = ConfigurationManager.GetSection("DESKey");
@@ -42,28 +42,8 @@ namespace LoveCollection.Controllers
 
             if (userId > 0)
             {
-                ViewBag.Types = await _collectionDBCotext.Types
-                       .Where(t => t.UserId == userId)
-                       .OrderBy(t => t.Sort)
-                       .Select(t => new TypesOutput()
-                       {
-                           Id = t.Id,
-                           Name = t.Name
-                       })
-                       .ToListAsync();
-
-                ViewBag.Collections = await _collectionDBCotext.Collections
-                       .Where(t => t.UserId == userId)
-                       .OrderBy(t => t.Sort)
-                       .Select(t => new CollectionOutput()
-                       {
-                           Id = t.Id,
-                           Sort = t.Sort,
-                           Title = t.Title,
-                           Url = t.Url,
-                           TypeId = t.TypeId
-                       })
-                       .ToListAsync();
+                ViewBag.Types = JsonConvert.SerializeObject(await loveCollectionAppService.GetAllTypeAsync(userId));
+                ViewBag.Collections = JsonConvert.SerializeObject(await loveCollectionAppService.GetAllCollectionAsync(userId));
             }
             return View();
         }
@@ -109,34 +89,61 @@ namespace LoveCollection.Controllers
         public async Task<IActionResult> ImportBookmark(IFormFile file)
         {
             var userId = GetUserId();
+            if (userId == 0)
+                return Redirect("/");
             using (var stream = file.OpenReadStream())
             {
                 byte[] buffer = new byte[stream.Length];
                 await stream.ReadAsync(buffer, 0, (int)stream.Length);
                 var htmlString = Encoding.UTF8.GetString(buffer);
                 HtmlParser htmlParser = new HtmlParser();
+                var urls = await loveCollectionAppService.GetCollectionUrlsByUserIdAsync(userId);
+                var tempTypeId = await loveCollectionAppService.GetOrAddTypeIdByUserIdAsync("未分类", userId);
+
+                #region 按类型导入
                 foreach (var childNode in htmlParser.Parse(htmlString).QuerySelector("DL DL").ChildNodes)
                 {
                     if (childNode is AngleSharp.Dom.IElement)
                     {
                         var element = childNode as AngleSharp.Dom.IElement;
                         var typeName = element.QuerySelectorAll("H3").FirstOrDefault()?.TextContent;
-                        if (string.IsNullOrWhiteSpace(typeName))
-                            typeName = "未分类";
-                        var typeId = await loveCollectionAppService.GetOrAddTypeIdByUserIdAsync(typeName, userId);
+                        var typeId = tempTypeId;
+                        if (!string.IsNullOrWhiteSpace(typeName))
+                            typeId = await loveCollectionAppService.GetOrAddTypeIdByUserIdAsync(typeName, userId);
                         var collections = element.QuerySelectorAll("A").ToList();
                         foreach (var collection in collections)
                         {
                             var url = collection.Attributes.FirstOrDefault(f => f.Name == "href")?.Value;
-                            url = url.Length >= 500 ? url.Substring(0, 499) : url;
+                            url = url.Length >= 500 ? url.Substring(0, 500) : url;
+                            if (urls.Contains(url))//忽略 已经存在 或 已经被导入过的链接 
+                                continue;
                             var value = collection.TextContent;
+                            value = value.Length >= 300 ? value.Substring(0, 300) : value;
                             await loveCollectionAppService.SaveCollectionAsync(value, url, typeId, userId);
+                            urls.Add(url);
                         }
                         await loveCollectionAppService.SaveChangesAsync();
                     }
                 }
+                #endregion
 
+                #region 重新检测漏网之鱼
+                foreach (var collection in htmlParser.Parse(htmlString).QuerySelectorAll("A"))
+                {
+                    var url = collection.Attributes.FirstOrDefault(f => f.Name == "href")?.Value;
+                    url = url.Length >= 500 ? url.Substring(0, 500) : url;
+                    if (urls.Contains(url))//忽略 已经存在 或 已经被导入过的链接 
+                        continue;
+                    var value = collection.TextContent;
+                    value = value.Length >= 300 ? value.Substring(0, 300) : value;
+                    await loveCollectionAppService.SaveCollectionAsync(value, url, tempTypeId, userId);
+                    urls.Add(url);
+                }
+                await loveCollectionAppService.SaveChangesAsync();
+                #endregion
             }
+            await loveCollectionAppService.UpdateAllCollectionToRedisAsync(userId);
+            await loveCollectionAppService.UpdateAllTypeToRedisAsync(userId);
             return View();
         }
     }

@@ -59,24 +59,7 @@
             this.pageInit();
         },
         //页面加载初始化
-        pageInit: function () {
-            //加载收藏内容
-            var loadCollection = function (typeId) {
-                $.ajax({
-                    url: "/api/LoveCollection/GetCollectionByTypeId?typeId=" + typeId,
-                    type: "get",
-                    success: function (sData) {
-                        var tempHtml = "";
-                        for (var i = 0; i < sData.length; i++) {
-                            var data = sData[i];
-                            tempHtml += _pageData.getCell(data.id, data.title, data.url);
-                        }
-                        tempHtml += _pageData.getCellNew();
-                        $("[data-typeId='" + typeId + "']").find(".div-block").prepend(tempHtml);
-                    }
-                });
-            }
-
+        pageInit: function () {           
             //获取绑定类型
             $.ajax({
                 url: "/api/LoveCollection/GetTypes",
@@ -85,6 +68,7 @@
                     for (var i = 0; i < sData.length; i++) {
                         htmlType += '<span><input type="radio" name="loveCollectiontype" value="' + sData[i].id + '" />' + sData[i].name + "</span>";
                     }
+                    htmlType += "<span class='span-addType'><a class='a-addType' href='javascript:;'>新建分类</a></span>";
                     $(".collectionTypes").html(htmlType);
 
                     $('input:radio[name="loveCollectiontype"]').iCheck({
@@ -99,7 +83,7 @@
         bindEvent: function () {
             var $content = $(".content");
             var dropObjTyep;
-            var dropReceiveObj;
+            var dropReceiveObj; 
 
             //新建分类
             $(".btn-addtype").click(function () {
@@ -324,20 +308,14 @@
                 }
             });
             //点击编辑【url】
-            $content.on("click", ".btn-edit", function () {
-                var $this = $(this);
-                //$(this).addClass("visibilityHidden");
-                //$(this).next().addClass("visibilityHidden");
+            $content.on("click", ".btn-edit", function () {                
+                var $this = $(this);              
                 var $spanedit = $this.parent().find(".span-edit");
                 var title = $spanedit.find("a").prop("title");
                 var href = $spanedit.find("a").prop("href");
                 var id = $this.closest(".cell").data("id");
                 var typeId = $this.closest(".type-block").data("typeid");
-                //$spanedit.html("<input spellcheck='false' class='inp-modify' type='text'/>")
-                //    .find("input")
-                //    .focus()
-                //    .data("href", href)
-                //    .val(title);                
+                      
                 $(".modal input[value='" + typeId + "']").iCheck('check'); 
                 $(".modal .value").val(title);
                 $(".modal .url").val(href);
@@ -359,7 +337,7 @@
                 }
             })
             //保存（保存修改）
-            $content.on("blur", ".inp-modify", function () {
+            $content.on("blur", ".inp-modify", function () {                
                 var $this = $(this);
                 var id = $this.closest(".cell").data("id");
                 var title = $this.val();
@@ -468,7 +446,7 @@
                 $(".modal").addClass("displayNone");
             });
             //修改
-            $(".modal .modify").click(function () {
+            $(".modal .modify").click(function () {                
                 var $modal = $(".modal");
                 var typeId = $modal.find('input:radio[name="loveCollectiontype"]:checked').val();
                 var title = $modal.find(".value").val();
@@ -490,6 +468,31 @@
                     }
                 });
             });
+
+            $(".modal").on("click", ".a-addType", function () {
+                $(this).closest(".span-addType").html("<input type='text' class='ipt-addType' />");
+            });
+            //添加类型
+            $(".modal").on("blur", ".ipt-addType", function () {
+                var $this = $(this);
+                $(".span-addType").html("保存中...");
+                $.ajax({
+                    url: "/api/LoveCollection/AddType?name=" + $this.val(),
+                    success: function (sData) {
+                        $(".span-addType").html('<input type="radio" name="loveCollectiontype" value="' + sData + '" />' + $this.val());
+                        $(".span-addType").find('input:radio[name="loveCollectiontype"]').iCheck({
+                            checkboxClass: 'icheckbox_minimal-blue',
+                            radioClass: 'iradio_minimal-blue',
+                            increaseArea: '20%',
+                        });
+                    }
+                });
+            })
+            $(".modal").on("keydown", ".ipt-addType", function () {
+                if (event.keyCode == 13) {
+                    $(this).blur();//调用失去焦点事件
+                }
+            })
         },
         //方法
         method: {
