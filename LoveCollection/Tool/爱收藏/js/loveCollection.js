@@ -48,7 +48,7 @@ function loadType(urlValue, userToken) {
                     }
                 });
                 if (isHas) {
-                    toastr.success("已经存在此类型，请更换名称");
+                    toastr.warning("已经存在此类型，请更换名称");
                     return;
                 }
                 $(".span-addType").html("保存中...");
