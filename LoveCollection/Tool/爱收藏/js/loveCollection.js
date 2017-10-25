@@ -23,7 +23,7 @@ function loadType(urlValue, userToken) {
             //加载绑定类型
             $.ajax({
                 url: baseUrl + "/api/LoveCollection/GetTypeIdByByUrlCRX?userToken=" + userToken + "&url=" + urlValue,
-                success: function (sDataTypeId) {                    
+                success: function (sDataTypeId) {
                     if (sDataTypeId > 0)
                         $('input:radio[value="' + sDataTypeId + '"]').iCheck('check');
                     else
@@ -34,13 +34,26 @@ function loadType(urlValue, userToken) {
             //
             $(".a-addType").click(function () {
                 $(this).closest(".span-addType").html("<input type='text' class='ipt-addType' />");
-            }); 
+            });
             //添加类型
             $(".span-addType").on("blur", ".ipt-addType", function () {
                 var $this = $(this);
+                //空类型判断
+                if ($.trim($this.val()) === "") return;
+                //重复类型判断
+                var isHas = false;
+                $(".loveCollectionType span").each(function (i, e) {
+                    if ($.trim($(e).text()) === $.trim($this.val())) {
+                        isHas = true;
+                    }
+                });
+                if (isHas) {
+                    toastr.success("已经存在此类型，请更换名称");
+                    return;
+                }
                 $(".span-addType").html("保存中...");
                 $.ajax({
-                    url: "/api/LoveCollection/AddType?name=" + $this.val() + "&userToken=" + userToken,
+                    url: baseUrl + "/api/LoveCollection/AddType?name=" + $this.val() + "&userToken=" + userToken,
                     success: function (sData) {
                         $(".span-addType").html('<input type="radio" name="loveCollectiontype" value="' + sData + '" />' + $this.val());
                         $(".span-addType").find('input:radio[name="loveCollectiontype"]').iCheck({
@@ -59,11 +72,11 @@ function loadType(urlValue, userToken) {
 
             //保存
             $(".btn-save").click(function () {
-                var typeId = $('input:radio[name="loveCollectiontype"]:checked').val();                
+                var typeId = $('input:radio[name="loveCollectiontype"]:checked').val();
                 $(".loveCollectionType").remove();
                 $.ajax({
                     url: baseUrl + "/api/LoveCollection/AddCollectionByCRX",
-                    data: { "url": urlValue, "userToken": userToken, "typeId": typeId },
+                    data: { "url": urlValue, "title": $("title").text(), "userToken": userToken, "typeId": typeId },
                     type: "post",
                     success: function (sData) {
                         toastr.success("收藏成功");
@@ -90,7 +103,7 @@ function addCollection(urlValue, userToken) {
     toastr.options = { "positionClass": "toast-top-center" };
     $.ajax({
         url: baseUrl + "/api/LoveCollection/AddCollectionByCRX",
-        data: { "url": urlValue, "userToken": userToken },
+        data: { "url": urlValue, "title": $("title").text(), "userToken": userToken },
         type: "post",
         success: function (sData) {
             toastr.success("收藏成功")

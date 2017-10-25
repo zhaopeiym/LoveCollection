@@ -332,4 +332,5 @@ input[type="text"], input[type="password"] {
     .modal .a-addType {
         color: red;
         margin-left: 5px;
+        text-decoration:none;
     }

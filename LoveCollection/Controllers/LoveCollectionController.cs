@@ -125,7 +125,7 @@ namespace LoveCollection.Controllers
         /// <returns></returns>
         [EnableCors("AllowSameDomain")]
         [HttpPost]
-        public async Task<object> AddCollectionByCRX(string url, string userToken = null, int? typeId = null)
+        public async Task<object> AddCollectionByCRX(string url, string title = null, string userToken = null, int? typeId = null)
         {
             userToken = userToken == null ? null : HttpUtility.UrlDecode(userToken);
             var userId = GetUserId(userToken);
@@ -147,7 +147,7 @@ namespace LoveCollection.Controllers
                    .Select(t => t.Id)
                    .FirstOrDefaultAsync();
             }
-            var obj = await AddCollectionByUserAndType(url, userId, typeId.Value);
+            var obj = await AddCollectionByUserAndType(url, userId, typeId.Value, title);
             return obj;
         }
 
@@ -158,19 +158,25 @@ namespace LoveCollection.Controllers
         /// <param name="userId"></param>
         /// <param name="typeId"></param>
         /// <returns></returns>
-        private async Task<object> AddCollectionByUserAndType(string url, int userId, int typeId)
+        private async Task<object> AddCollectionByUserAndType(string url, int userId, int typeId, string titleName = null)
         {
             using (HttpClient http = new HttpClient())
             {
                 var title = url;
-                try
+                //如果直接传了名称过来，则不去主动获取
+                if (!string.IsNullOrWhiteSpace(titleName))
+                    title = titleName;
+                else
                 {
-                    var htmlString = await http.GetStringAsync(url);
-                    HtmlParser htmlParser = new HtmlParser();
-                    title = htmlParser.Parse(htmlString)
-                        .QuerySelector("title")?.TextContent ?? url;
+                    try
+                    {
+                        var htmlString = await http.GetStringAsync(url);
+                        HtmlParser htmlParser = new HtmlParser();
+                        title = htmlParser.Parse(htmlString)
+                            .QuerySelector("title")?.TextContent ?? url;
+                    }
+                    catch (Exception) { }
                 }
-                catch (Exception) { }
                 title = title.Split('-')[0];
                 var sort = 0.0;
                 if (await loveCollectionAppService.CollectionQuery(userId).AnyAsync())

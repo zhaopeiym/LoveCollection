@@ -5,7 +5,7 @@
     var user = ViewBag.UserInfo as UserInfoModel;
 }
 
-<link href="~/css/Index.css" rel="stylesheet" />
+<link href="~/css/Index.css?v=20171025" rel="stylesheet" />
 <link href="~/css/_all.css" rel="stylesheet" />
 <style type="text/css">
 
@@ -16,10 +16,10 @@
     <div class="addtypeContent clearfix">
         @if (user != null && !string.IsNullOrWhiteSpace(user.UserId))
         {
-            <div class="div-logout">
-                <span class="userName">@user.UserMail</span>
-                <a href="/Home/LogOff" class="logout">退出登录</a>
-            </div>
+        <div class="div-logout">
+            <span class="userName">@user.UserMail</span>
+            <a href="/Home/LogOff" class="logout">退出登录</a>
+        </div>
         }
         <div>
             <input type="text" class="inp-type displayNone add-input-type" />
@@ -31,23 +31,23 @@
 
     @if (user == null || string.IsNullOrWhiteSpace(user.UserId))
     {
-        <div class=" loginBlock div-login">
-            <div class="loginTitle">登录 . 注册</div>
-            <div>
-                <input type="text" value="@user?.UserMail" placeholder="请输入您的邮箱" class="mail" />
-            </div>
-            <div>
-                <input type="password" placeholder="请输入您的密码" class="passwod" />
-            </div>
-            <div>
-                <button type="button" class="btn-register" title="登录即注册">登录 / 注册</button>
-            </div>
+    <div class=" loginBlock div-login">
+        <div class="loginTitle">登录 . 注册</div>
+        <div>
+            <input type="text" value="@user?.UserMail" placeholder="请输入您的邮箱" class="mail" />
         </div>
+        <div>
+            <input type="password" placeholder="请输入您的密码" class="passwod" />
+        </div>
+        <div>
+            <button type="button" class="btn-register" title="登录即注册">登录 / 注册</button>
+        </div>
+    </div>
     }
     @{
         <div class="collectionDetailedInfo">
 
-        </div>       
+        </div>
     }
 
     @*<div class="panel-title">常用链接</div><div class="div-block clearfix diyCollection"></div>*@
@@ -87,7 +87,7 @@
                         <a class="btn-type-edit visibilityHidden"><img src="/images/edit.png" /></a>\
                         <a class="btn-type-del visibilityHidden"><img src="/images/Delete.png" /></a>\
                     </div>\
-                    <div class="div-block clearfix">'; 
+                    <div class="div-block clearfix">';
             var cellTempHtml = "";
             for (var j = 0; j < collections.length; j++) {
                 var collection = collections[j];
@@ -117,5 +117,5 @@
         $(".collectionDetailedInfo").html(tempHtml);
     }
 </script>
-<script src="~/js/Index.js?v=20171022"></script>
+<script src="~/js/Index.js?v=20171025"></script>
 

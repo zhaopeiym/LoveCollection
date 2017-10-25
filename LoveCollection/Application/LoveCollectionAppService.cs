@@ -104,7 +104,7 @@ namespace LoveCollection.Application
         /// <param name="url"></param>
         /// <param name="typeId"></param>
         /// <param name="userId"></param>
-        public async Task SaveCollectionAsync(string title, string url, int typeId, int userId)
+        public async Task SaveCollectionAsync(string title, string url, int typeId, int userId,double addSort = 1024)
         {
             ////忽略 已经存在 或 已经被导入过的链接 
             //if (await GetCollectionsByUserId(userId).Where(t => t.Url == url).AnyAsync())
@@ -118,7 +118,7 @@ namespace LoveCollection.Application
                 Title = title,
                 UserId = userId,
                 TypeId = typeId,
-                Sort = sort + 1024
+                Sort = sort + addSort
             });
         }
 

@@ -475,6 +475,20 @@
             //添加类型
             $(".modal").on("blur", ".ipt-addType", function () {
                 var $this = $(this);
+                //空类型判断
+                if ($.trim($this.val()) === "") return;
+                //重复类型判断
+                var isHas = false;
+                $(".modal .collectionTypes span").each(function (i, e) {
+                    if ($.trim($(e).text()) === $.trim($this.val())) {
+                        isHas = true;
+                    }
+                });
+                if (isHas) {
+                    toastr.success("已经存在此类型，请更换名称");
+                    return;
+                }
+
                 $(".span-addType").html("保存中...");
                 $.ajax({
                     url: "/api/LoveCollection/AddType?name=" + $this.val(),

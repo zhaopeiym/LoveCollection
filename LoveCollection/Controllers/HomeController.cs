@@ -34,6 +34,7 @@ namespace LoveCollection.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = GetUserId();
+            Log.Information("userId:" + userId);
             ViewBag.UserInfo = new UserInfoModel()
             {
                 UserMail = Request.Cookies.FirstOrDefault(t => t.Key == "userName").Value,
@@ -111,6 +112,7 @@ namespace LoveCollection.Controllers
                         if (!string.IsNullOrWhiteSpace(typeName))
                             typeId = await loveCollectionAppService.GetOrAddTypeIdByUserIdAsync(typeName, userId);
                         var collections = element.QuerySelectorAll("A").ToList();
+                        var rowIndex = 1;
                         foreach (var collection in collections)
                         {
                             var url = collection.Attributes.FirstOrDefault(f => f.Name == "href")?.Value;
@@ -119,7 +121,7 @@ namespace LoveCollection.Controllers
                                 continue;
                             var value = collection.TextContent;
                             value = value.Length >= 300 ? value.Substring(0, 300) : value;
-                            await loveCollectionAppService.SaveCollectionAsync(value, url, typeId, userId);
+                            await loveCollectionAppService.SaveCollectionAsync(value, url, typeId, userId, rowIndex++ * 1024);
                             urls.Add(url);
                         }
                         await loveCollectionAppService.SaveChangesAsync();
@@ -128,6 +130,7 @@ namespace LoveCollection.Controllers
                 #endregion
 
                 #region 重新检测漏网之鱼
+                var rowNumer = 1;
                 foreach (var collection in htmlParser.Parse(htmlString).QuerySelectorAll("A"))
                 {
                     var url = collection.Attributes.FirstOrDefault(f => f.Name == "href")?.Value;
@@ -136,7 +139,7 @@ namespace LoveCollection.Controllers
                         continue;
                     var value = collection.TextContent;
                     value = value.Length >= 300 ? value.Substring(0, 300) : value;
-                    await loveCollectionAppService.SaveCollectionAsync(value, url, tempTypeId, userId);
+                    await loveCollectionAppService.SaveCollectionAsync(value, url, tempTypeId, userId, rowNumer++ * 1024);
                     urls.Add(url);
                 }
                 await loveCollectionAppService.SaveChangesAsync();

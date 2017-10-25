@@ -36,6 +36,7 @@
     .loveCollectionType .a-addType {
         color: red;
         margin-left: 5px;
+        text-decoration:none;
     }
 
 .div-save, .btn-cancel {
