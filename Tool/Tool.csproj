@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LoveCollection.Core\LoveCollection.Core.csproj" />
+    <ProjectReference Include="..\LoveCollection.EntityFramework\LoveCollection.EntityFramework.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -6,15 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using AngleSharp.Parser.Html;
 using Microsoft.EntityFrameworkCore;
-using LoveCollection.Entities;
-using LoveCollection.Dto;
 using Newtonsoft.Json;
 using System.Web;
 using Microsoft.AspNetCore.Http;
 using Talk.Redis;
 using Microsoft.AspNetCore.Cors;
-using Serilog;
 using LoveCollection.Application;
+using LoveCollection.EntityFramework.EntityFramework;
+using LoveCollection.Core.Entities;
+using LoveCollection.Application.Dto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -206,15 +206,26 @@ namespace LoveCollection.Controllers
         public async Task ModifyCollection(int id, string url, string title, int? typeId = null)
         {
             var userId = GetUserId();
-            var collection = await loveCollectionAppService.CollectionQuery(userId)
-                .Where(t => t.Id == id)
-                .FirstOrDefaultAsync();
-            collection.Url = url;
-            collection.Title = title;
-            if (typeId.HasValue)
-                collection.TypeId = typeId.Value;
-            await _collectionDBCotext.SaveChangesAsync();
-            await loveCollectionAppService.UpdateAllCollectionToRedisAsync(userId);
+            try
+            {
+                var collection = await loveCollectionAppService.CollectionQuery(userId)
+               .Where(t => t.Id == id)
+               .FirstOrDefaultAsync();
+                collection.Url = url;
+                collection.Title = title;
+                if (typeId.HasValue)
+                    collection.TypeId = typeId.Value;
+                await _collectionDBCotext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                await loveCollectionAppService.UpdateAllTypeToRedisAsync(userId);
+                throw;
+            }
+            finally
+            {
+                await loveCollectionAppService.UpdateAllCollectionToRedisAsync(userId);
+            }
         }
 
         /// <summary>
@@ -265,7 +276,7 @@ namespace LoveCollection.Controllers
             var typeSort = 0.0;
             if (await loveCollectionAppService.TypeQuery(userId).AnyAsync())
                 typeSort = await loveCollectionAppService.TypeQuery(userId).MaxAsync(t => t.Sort);
-            var type = _collectionDBCotext.Types.Add(new Entities.Type()
+            var type = _collectionDBCotext.Types.Add(new Core.Entities.Type()
             {
                 Name = name,
                 UserId = userId,
@@ -297,10 +308,19 @@ namespace LoveCollection.Controllers
         public async Task ModifyTypeNameById(int typeId, string typeName)
         {
             var userId = GetUserId();
-            (await loveCollectionAppService.TypeQuery(userId).Where(t => t.Id == typeId).FirstAsync()).Name = typeName;
-            //_collectionDBCotext.Types.Where(t => t.Id == typeId).FirstAsync()).Name = typeName;
-            await _collectionDBCotext.SaveChangesAsync();
-            await loveCollectionAppService.UpdateAllTypeToRedisAsync(userId);
+            try
+            {
+                (await loveCollectionAppService.TypeQuery(userId).Where(t => t.Id == typeId).FirstAsync()).Name = typeName;
+                await _collectionDBCotext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                await loveCollectionAppService.UpdateAllTypeToRedisAsync(userId);
+            }
         }
 
 
@@ -409,7 +429,7 @@ namespace LoveCollection.Controllers
             }
             else
             {
-                SaveCookie(new Entities.User() { Id = user.Id, Mail = mail });
+                SaveCookie(new Core.Entities.User() { Id = user.Id, Mail = mail });
             }
             return requestMessage;
         }
@@ -455,7 +475,7 @@ namespace LoveCollection.Controllers
                 user = dataUser;
                 _collectionDBCotext.Users.Add(user);
                 await _collectionDBCotext.SaveChangesAsync();
-                _collectionDBCotext.Types.Add(new Entities.Type() { Name = "常用链接", UserId = user.Id, Sort = 1024 });
+                _collectionDBCotext.Types.Add(new Core.Entities.Type() { Name = "常用链接", UserId = user.Id, Sort = 1024 });
             }
             await _collectionDBCotext.SaveChangesAsync();
             SaveCookie(user);

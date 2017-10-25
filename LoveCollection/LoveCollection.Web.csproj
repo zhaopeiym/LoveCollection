@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>LoveCollection.Web</AssemblyName>
+    <RootNamespace>LoveCollection.Web</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.9.9" />
+    <PackageReference Include="jQuery.Form" Version="4.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.0" />
@@ -35,6 +38,12 @@
     <None Include="wwwroot\css\_all.css" />
     <None Include="wwwroot\js\icheck.min.js" />
     <None Include="wwwroot\js\toastr.min.2.1.3.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LoveCollection.Application\LoveCollection.Application.csproj" />
+    <ProjectReference Include="..\LoveCollection.Core\LoveCollection.Core.csproj" />
+    <ProjectReference Include="..\LoveCollection.EntityFramework\LoveCollection.EntityFramework.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties Tool_4爱收藏_4manifest_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>

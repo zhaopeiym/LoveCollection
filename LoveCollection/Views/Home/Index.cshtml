@@ -1,4 +1,4 @@
-﻿@using LoveCollection.Dto;
+﻿@using LoveCollection.Application.Dto;
 @using System.Text;
 @{
     ViewData["Title"] = "爱收藏 - 让你爱上收藏";
@@ -16,10 +16,10 @@
     <div class="addtypeContent clearfix">
         @if (user != null && !string.IsNullOrWhiteSpace(user.UserId))
         {
-        <div class="div-logout">
-            <span class="userName">@user.UserMail</span>
-            <a href="/Home/LogOff" class="logout">退出登录</a>
-        </div>
+            <div class="div-logout">
+                <span class="userName">@user.UserMail</span>
+                <a href="/Home/LogOff" class="logout">退出登录</a>
+            </div>
         }
         <div>
             <input type="text" class="inp-type displayNone add-input-type" />
@@ -31,18 +31,18 @@
 
     @if (user == null || string.IsNullOrWhiteSpace(user.UserId))
     {
-    <div class=" loginBlock div-login">
-        <div class="loginTitle">登录 . 注册</div>
-        <div>
-            <input type="text" value="@user?.UserMail" placeholder="请输入您的邮箱" class="mail" />
+        <div class=" loginBlock div-login">
+            <div class="loginTitle">登录 . 注册</div>
+            <div>
+                <input type="text" value="@user?.UserMail" placeholder="请输入您的邮箱" class="mail" />
+            </div>
+            <div>
+                <input type="password" placeholder="请输入您的密码" class="passwod" />
+            </div>
+            <div>
+                <button type="button" class="btn-register" title="登录即注册">登录 / 注册</button>
+            </div>
         </div>
-        <div>
-            <input type="password" placeholder="请输入您的密码" class="passwod" />
-        </div>
-        <div>
-            <button type="button" class="btn-register" title="登录即注册">登录 / 注册</button>
-        </div>
-    </div>
     }
     @{
         <div class="collectionDetailedInfo">

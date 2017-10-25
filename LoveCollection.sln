@@ -3,7 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoveCollection", "LoveCollection\LoveCollection.csproj", "{B7CA8AA6-F694-4E88-AEA0-0FEC0269F657}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoveCollection.Web", "LoveCollection\LoveCollection.Web.csproj", "{B7CA8AA6-F694-4E88-AEA0-0FEC0269F657}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tool", "Tool\Tool.csproj", "{BDC05FDA-CBFC-4847-B8A3-AC948916E9DA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{7AD2CCFA-8867-4A68-AD9C-4E2CE895BFEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoveCollection.EntityFramework", "LoveCollection.EntityFramework\LoveCollection.EntityFramework.csproj", "{C35C5100-BC15-4C4C-93C7-9DA244C58ACB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoveCollection.Core", "LoveCollection.Core\LoveCollection.Core.csproj", "{E36E1150-5C80-4DA0-A0D3-4962F3917AD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoveCollection.Application", "LoveCollection.Application\LoveCollection.Application.csproj", "{65F21D71-6A84-49BD-95EB-35F57CBEFC4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +25,28 @@ Global
 		{B7CA8AA6-F694-4E88-AEA0-0FEC0269F657}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7CA8AA6-F694-4E88-AEA0-0FEC0269F657}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7CA8AA6-F694-4E88-AEA0-0FEC0269F657}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDC05FDA-CBFC-4847-B8A3-AC948916E9DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDC05FDA-CBFC-4847-B8A3-AC948916E9DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDC05FDA-CBFC-4847-B8A3-AC948916E9DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDC05FDA-CBFC-4847-B8A3-AC948916E9DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C35C5100-BC15-4C4C-93C7-9DA244C58ACB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C35C5100-BC15-4C4C-93C7-9DA244C58ACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C35C5100-BC15-4C4C-93C7-9DA244C58ACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C35C5100-BC15-4C4C-93C7-9DA244C58ACB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E36E1150-5C80-4DA0-A0D3-4962F3917AD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E36E1150-5C80-4DA0-A0D3-4962F3917AD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E36E1150-5C80-4DA0-A0D3-4962F3917AD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E36E1150-5C80-4DA0-A0D3-4962F3917AD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65F21D71-6A84-49BD-95EB-35F57CBEFC4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65F21D71-6A84-49BD-95EB-35F57CBEFC4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65F21D71-6A84-49BD-95EB-35F57CBEFC4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65F21D71-6A84-49BD-95EB-35F57CBEFC4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BDC05FDA-CBFC-4847-B8A3-AC948916E9DA} = {7AD2CCFA-8867-4A68-AD9C-4E2CE895BFEA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F1D6B058-86B5-487A-AB0E-AEC487474DCD}

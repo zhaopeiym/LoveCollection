@@ -16,6 +16,7 @@ using Serilog;
 using Serilog.Events;
 using Microsoft.Extensions.Logging;
 using LoveCollection.Application;
+using LoveCollection.EntityFramework.EntityFramework;
 
 namespace LoveCollection
 {

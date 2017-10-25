@@ -1,11 +1,7 @@
-﻿using LoveCollection.Entities;
+﻿using LoveCollection.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace LoveCollection
+namespace LoveCollection.EntityFramework.EntityFramework
 {
     public class CollectionDBCotext : DbContext
     {
@@ -26,7 +22,6 @@ namespace LoveCollection
         public DbSet<User> Users { get; set; }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<Tag> Tags { get; set; }
-        public DbSet<Entities.Type> Types { get; set; }
+        public DbSet<Core.Entities.Type> Types { get; set; }
     }
-
 }

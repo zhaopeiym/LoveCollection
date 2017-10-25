@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LoveCollection.Entities
+namespace LoveCollection.Core.Entities
 {
     public class Type
     {

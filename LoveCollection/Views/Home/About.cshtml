@@ -15,7 +15,15 @@
     .messg {
         color: red;
         margin-left: 8px;
-        font-size: 12px;    
+        font-size: 12px;
+    }
+
+    .successMesg {
+        color: red;
+        text-align: center;
+        font-size: 23px;
+        font-weight: 800;
+        margin-bottom: 15px;
     }
 
     .displayNone {
@@ -27,14 +35,22 @@
     }
 </style>
 <div style="margin-top:30px">
+    <div class="successMesg"></div>
     <div class="divrow importBookmark-div">
-        <form asp-action="ImportBookmark"
-              asp-controller="Home"
-              method="post"
-              enctype="multipart/form-data">
+
+        @*<form asp-action="ImportBookmark"
+                  asp-controller="Home"
+                  method="post"
+                  enctype="multipart/form-data">
+                <span>导入收藏夹：</span>
+                <input type="file" name="file" onchange="Import(this)" />
+                <input type="submit" value="导入" onclick="Import()" />
+                <span class="messg">(必须为浏览器导出的html格式的书签文件)</span>
+            </form>*@
+
+        <form id="form2" action="/Home/ImportBookmark" method="post" enctype="multipart/form-data">
             <span>导入收藏夹：</span>
-            <input type="file" name="file" />
-            <input type="submit" value="导入" onclick="Import()" />
+            <input type="file" name="file" onchange="Import(this)" />
             <span class="messg">(必须为浏览器导出的html格式的书签文件)</span>
         </form>
     </div>
@@ -59,9 +75,20 @@
     </div>
 </div>
 
-<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/js/jquery.form/jquery-1.10.2.js"></script>
+<script src="~/js/jquery.form/jquery.form.js"></script>
 <script type="text/javascript">
-    function Import() {
-        $(".messg").html("正在导入中,请稍候...");
+    function Import(obj) {
+        $("#form2").ajaxSubmit({
+            beforeSend: function () {
+                $(".successMesg").html("正在导入中,请稍候...");
+            },
+            success: function (responseText) {
+                $(".successMesg").html("恭喜您，导入成功~~3秒后跳转到主页");
+                setTimeout(function () {
+                    location.href = "/";
+                }, 3000);
+            }
+        });
     }
 </script>

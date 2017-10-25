@@ -4,3 +4,11 @@
 /LoveCollection/appsettings.Development.json
 /.vs
 /LoveCollection/logs
+/LoveCollection.Application/obj
+/LoveCollection.Application/bin
+/LoveCollection.Core/bin
+/LoveCollection.Core/obj
+/LoveCollection.EntityFramework/obj
+/LoveCollection.EntityFramework/bin
+/Tool/bin
+/Tool/obj

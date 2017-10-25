@@ -1,9 +1,8 @@
-﻿using LoveCollection.Dto;
-using LoveCollection.Entities;
+﻿using LoveCollection.Application.Dto;
+using LoveCollection.Core.Entities;
+using LoveCollection.EntityFramework.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Serilog;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -85,7 +84,7 @@ namespace LoveCollection.Application
                 var typeSort = 0.0;
                 if (await TypeQuery(userId).AnyAsync())
                     typeSort = await TypeQuery(userId).MaxAsync(t => t.Sort);
-                var entityEntry = collectionDBCotext.Types.Add(new Entities.Type()
+                var entityEntry = collectionDBCotext.Types.Add(new Core.Entities.Type()
                 {
                     Name = typeName,
                     UserId = userId,
@@ -104,7 +103,7 @@ namespace LoveCollection.Application
         /// <param name="url"></param>
         /// <param name="typeId"></param>
         /// <param name="userId"></param>
-        public async Task SaveCollectionAsync(string title, string url, int typeId, int userId,double addSort = 1024)
+        public async Task SaveCollectionAsync(string title, string url, int typeId, int userId, double addSort = 1024)
         {
             ////忽略 已经存在 或 已经被导入过的链接 
             //if (await GetCollectionsByUserId(userId).Where(t => t.Url == url).AnyAsync())
@@ -181,7 +180,7 @@ namespace LoveCollection.Application
 
         #region IQueryable
 
-        public IQueryable<Entities.Type> TypeQuery(int userId)
+        public IQueryable<Core.Entities.Type> TypeQuery(int userId)
         {
             return collectionDBCotext.Types.Where(t => t.UserId == userId);
         }
