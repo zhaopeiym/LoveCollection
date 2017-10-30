@@ -475,7 +475,7 @@ namespace LoveCollection.Controllers
                 user = dataUser;
                 _collectionDBCotext.Users.Add(user);
                 await _collectionDBCotext.SaveChangesAsync();
-                _collectionDBCotext.Types.Add(new Core.Entities.Type() { Name = "常用链接", UserId = user.Id, Sort = 1024 });
+                _collectionDBCotext.Types.Add(new Core.Entities.Type() { Name = "稍候阅读", UserId = user.Id, Sort = 1024 });
             }
             await _collectionDBCotext.SaveChangesAsync();
             SaveCookie(user);
