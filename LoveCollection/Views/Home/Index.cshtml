@@ -5,10 +5,10 @@
     var user = ViewBag.UserInfo as UserInfoModel;
 }
 
-<link href="~/css/Index.css?v=20171025" rel="stylesheet" />
+<link href="~/css/Index.css?v=20190519" rel="stylesheet" />
 <link href="~/css/_all.css" rel="stylesheet" />
 <style type="text/css">
-
+   
 </style>
 
 <div class="content clearfix">
@@ -53,6 +53,16 @@
     @*<div class="panel-title">常用链接</div><div class="div-block clearfix diyCollection"></div>*@
 </div>
 
+<div class="displayNone directoryItmeTypesContent">
+    <div class="directoryItmeTypes">
+
+    </div>
+    <img class="directoryItmeTypesDel" src="/images/Delete.png" />
+</div>
+<div class="showDirectory">
+    显示目录
+</div>
+
 <div class="modal displayNone">
     <div class="collectionTypes">
 
@@ -79,15 +89,17 @@
     var collections = @(Html.Raw(ViewBag.Collections));
     if (types) {
         var tempHtml = "";
+        var tempTypes = "";
         for (var i = 0; i < types.length; i++) {
             var type = types[i];
+            tempTypes += "<div><a class='apositioning' data-typeid='" + type.Id +"' href='/#"+ type.Id +"'>" + type.Name +"</a></div>";
             tempHtml += '<div class="type-block" data-typeid="' + type.Id+'">\
-                    <div data-id="' + type.Id+'" class="panel-title">\
-                        <span draggable="true">' + type.Name+'</span>\
-                        <a class="btn-type-edit visibilityHidden"><img src="/images/edit.png" /></a>\
-                        <a class="btn-type-del visibilityHidden"><img src="/images/Delete.png" /></a>\
-                    </div>\
-                    <div class="div-block clearfix">';
+                            <div id="' + type.Id +'" data-id="' + type.Id+'" class="panel-title">\
+                                <span draggable="true">' + type.Name+'</span>\
+                                <a class="btn-type-edit visibilityHidden"><img src="/images/edit.png" /></a>\
+                                <a class="btn-type-del visibilityHidden"><img src="/images/Delete.png" /></a>\
+                            </div>\
+                            <div class="div-block clearfix">';
             var cellTempHtml = "";
             for (var j = 0; j < collections.length; j++) {
                 var collection = collections[j];
@@ -106,16 +118,24 @@
                 }
             }
             tempHtml += cellTempHtml;
-            tempHtml +=     '<div class="cell">\
-                            <div class="div-edit">\
-                                <span class="span-edit btn-new displayNone">新增</span>\
-                            </div>\
-                        </div>\
-                    </div>\
-                </div>';
+                tempHtml += '<div class="cell">\
+                                <div class="div-edit">\
+                                    <span class="span-edit btn-new visibilityHidden displayInlineBlock">新增</span>\
+                                </div>\
+                             </div>\
+                          </div>\
+                      </div>';
         }
         $(".collectionDetailedInfo").html(tempHtml);
+        $(".directoryItmeTypes").html(tempTypes);
+
+        $(".apositioning").click(function () {
+            var typeid = $(this).data("typeid");
+            $(".showblock").removeClass("showblock");
+            $("#" + typeid).parent().addClass("showblock");
+            $(".directoryItmeTypesDel").click();
+        });
     }
 </script>
-<script src="~/js/Index.js?v=20171025"></script>
+<script src="~/js/Index.js?v=20190519"></script>
 

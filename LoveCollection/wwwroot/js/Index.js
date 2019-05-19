@@ -19,7 +19,7 @@
         getCellNew: function () {
             return '<div class="cell">\
                         <div class="div-edit">\
-                            <span class="span-edit btn-new displayNone">新增</span>\
+                            <span class="span-edit btn-new visibilityHidden displayInlineBlock">新增</span>\
                         </div>\
                         </div>';
         },
@@ -31,7 +31,7 @@
                             </div>\
                             <div class="div-block clearfix">\
                                 <div class="cell">\
-                                    <div class="span-edit btn-new displayNone">新增</div>\
+                                    <div class="span-edit btn-new visibilityHidden displayInlineBlock">新增</div>\
                                 </div>\
                             </div>\
                         </div>';
@@ -53,13 +53,13 @@
     };
 
     return {
-        init: function () { 
+        init: function () {
             toastr.options = { "positionClass": "toast-top-center" };
             this.bindEvent();
             this.pageInit();
         },
         //页面加载初始化
-        pageInit: function () {           
+        pageInit: function () {
             //获取绑定类型
             $.ajax({
                 url: "/api/LoveCollection/GetTypes",
@@ -83,7 +83,7 @@
         bindEvent: function () {
             var $content = $(".content");
             var dropObjTyep;
-            var dropReceiveObj; 
+            var dropReceiveObj;
 
             //新建分类
             $(".btn-addtype").click(function () {
@@ -308,15 +308,15 @@
                 }
             });
             //点击编辑【url】
-            $content.on("click", ".btn-edit", function () {                
-                var $this = $(this);              
+            $content.on("click", ".btn-edit", function () {
+                var $this = $(this);
                 var $spanedit = $this.parent().find(".span-edit");
                 var title = $spanedit.find("a").prop("title");
                 var href = $spanedit.find("a").prop("href");
                 var id = $this.closest(".cell").data("id");
                 var typeId = $this.closest(".type-block").data("typeid");
-                      
-                $(".modal input[value='" + typeId + "']").iCheck('check'); 
+
+                $(".modal input[value='" + typeId + "']").iCheck('check');
                 $(".modal .value").val(title);
                 $(".modal .url").val(href);
                 $(".modal .id").val(id);
@@ -337,7 +337,7 @@
                 }
             })
             //保存（保存修改）
-            $content.on("blur", ".inp-modify", function () {                
+            $content.on("blur", ".inp-modify", function () {
                 var $this = $(this);
                 var id = $this.closest(".cell").data("id");
                 var title = $this.val();
@@ -409,11 +409,11 @@
             });
             //【新增按钮】鼠标进入（编辑）
             $content.on("mouseover", ".div-block", function () {
-                $(this).find(".btn-new").removeClass("displayNone").addClass("displayInlineBlock");
+                $(this).find(".btn-new").removeClass("visibilityHidden");//.addClass("displayInlineBlock");
             });
             //【新增按钮】鼠标移出
             $content.on("mouseout", ".div-block", function () {
-                $(this).find(".btn-new").removeClass("displayInlineBlock").addClass("displayNone");
+                $(this).find(".btn-new").addClass("visibilityHidden");//.removeClass("displayInlineBlock")
             });
 
             //登录/注册
@@ -446,7 +446,7 @@
                 $(".modal").addClass("displayNone");
             });
             //修改
-            $(".modal .modify").click(function () {                
+            $(".modal .modify").click(function () {
                 var $modal = $(".modal");
                 var typeId = $modal.find('input:radio[name="loveCollectiontype"]:checked').val();
                 var title = $modal.find(".value").val();
@@ -506,7 +506,17 @@
                 if (event.keyCode == 13) {
                     $(this).blur();//调用失去焦点事件
                 }
-            })
+            })            
+            //点击目录关闭按钮
+            $(".directoryItmeTypesDel").click(function () {                
+                $(this).parent().addClass("displayNone");
+                $(".showDirectory").removeClass("displayNone");
+            }); 
+            $(".showDirectory").click(function () {
+                $(this).addClass("displayNone");
+                $(".directoryItmeTypesDel").parent().removeClass("displayNone");
+            });
+           
         },
         //方法
         method: {
@@ -531,6 +541,6 @@
     };
 }();
 
-$(function () {
+$(function () {    
     loveCollection.init();
 });
