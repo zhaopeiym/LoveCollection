@@ -5,7 +5,7 @@
     var user = ViewBag.UserInfo as UserInfoModel;
 }
 
-<link href="~/css/Index.css?v=20190519" rel="stylesheet" />
+<link href="~/css/Index.css?v=20190520" rel="stylesheet" />
 <link href="~/css/_all.css" rel="stylesheet" />
 <style type="text/css">
    
@@ -57,7 +57,7 @@
     <div class="directoryItmeTypes">
 
     </div>
-    <img class="directoryItmeTypesDel" src="/images/Delete.png" />
+    @*<img class="directoryItmeTypesDel" src="/images/Delete.png" />*@
 </div>
 <div class="showDirectory">
     显示目录
@@ -91,8 +91,7 @@
         var tempHtml = "";
         var tempTypes = "";
         for (var i = 0; i < types.length; i++) {
-            var type = types[i];
-            tempTypes += "<div><a class='apositioning' data-typeid='" + type.Id +"' href='/#"+ type.Id +"'>" + type.Name +"</a></div>";
+            var type = types[i];            
             tempHtml += '<div class="type-block" data-typeid="' + type.Id+'">\
                             <div id="' + type.Id +'" data-id="' + type.Id+'" class="panel-title">\
                                 <span draggable="true">' + type.Name+'</span>\
@@ -127,15 +126,21 @@
                       </div>';
         }
         $(".collectionDetailedInfo").html(tempHtml);
-        $(".directoryItmeTypes").html(tempTypes);
 
-        $(".apositioning").click(function () {
-            var typeid = $(this).data("typeid");
-            $(".showblock").removeClass("showblock");
-            $("#" + typeid).parent().addClass("showblock");
-            $(".directoryItmeTypesDel").click();
-        });
+       
+        //目录数据组装
+        //排序
+        types.sort(
+            function compareFunction(param1, param2) {
+                return param1.Name.localeCompare(param2.Name, "zh");
+            }
+        );
+        for (var i = 0; i < types.length; i++) {
+            var type = types[i];
+            tempTypes += "<div><a class='apositioning' data-typeid='" + type.Id + "' href='/#" + type.Id + "'>" + type.Name + "</a></div>";
+        }
+        $(".directoryItmeTypes").html(tempTypes);      
     }
 </script>
-<script src="~/js/Index.js?v=20190519"></script>
+<script src="~/js/Index.js?v=20190520"></script>
 

@@ -506,17 +506,35 @@
                 if (event.keyCode == 13) {
                     $(this).blur();//调用失去焦点事件
                 }
-            })            
-            //点击目录关闭按钮
-            $(".directoryItmeTypesDel").click(function () {                
-                $(this).parent().addClass("displayNone");
-                $(".showDirectory").removeClass("displayNone");
-            }); 
-            $(".showDirectory").click(function () {
+            })
+
+            //目录(隐藏)
+            $(".directoryItmeTypesContent").mouseout(function (e) {
+                //阻止子元素相应mouseout事件
+                evt = window.event || e;
+                var obj = evt.toElement || evt.relatedTarget;
+                var pa = this;
+                if (pa.contains(obj)) return false; 
+
                 $(this).addClass("displayNone");
-                $(".directoryItmeTypesDel").parent().removeClass("displayNone");
+                $(".showDirectory").removeClass("displayNone");
             });
-           
+            //目录(显示)
+            $(".showDirectory").mouseover(function () {
+                $(this).addClass("displayNone");
+                $(".directoryItmeTypesContent").removeClass("displayNone");
+            });
+            //目录(点击 隐藏)
+            $(".directoryItmeTypes").on("click", ".apositioning", function () {
+                var typeid = $(this).data("typeid");
+                $(".showblock").removeClass("showblock");
+                $("#" + typeid).parent().addClass("showblock");
+                //$(".directoryItmeTypesDel").click();
+
+                //隐藏
+                $(".directoryItmeTypesContent").addClass("displayNone");
+                $(".showDirectory").removeClass("displayNone");
+            });
         },
         //方法
         method: {
@@ -541,6 +559,6 @@
     };
 }();
 
-$(function () {    
+$(function () {
     loveCollection.init();
 });
