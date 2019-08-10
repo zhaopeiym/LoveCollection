@@ -337,7 +337,7 @@ input[type="text"], input[type="password"] {
     }
 
 .collectionDetailedInfo {
-    column-count: 4;
+    column-width: 400px;
     column-gap: 10px;
 }
 
