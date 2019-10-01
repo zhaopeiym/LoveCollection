@@ -536,10 +536,10 @@
                 $(".showDirectory").removeClass("displayNone");
             });
 
-            //全部折叠展开
+            //折叠展开
             $(".allFold").click(function () {
-                if ($(this).html().trim() === "全部折叠") {
-                    $(this).html("全部展开");
+                if ($(this).html().trim() === "折叠") {
+                    $(this).html("展开");
                     $(".collectionDetailedInfo")
                         .find(".type-block").removeClass("show")
                         .find(".div-block").hide()
@@ -550,7 +550,7 @@
 
                 }
                 else {
-                    $(this).html("全部折叠");
+                    $(this).html("折叠");
                     $(".collectionDetailedInfo")
                         .find(".type-block").addClass("show")
                         .find(".div-block").show()
