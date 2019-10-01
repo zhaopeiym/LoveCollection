@@ -43,8 +43,8 @@ html {
 .content {
     /*border: 1px dashed #0094ff;*/
     margin-top: 15px;
-    margin-left: 3%;
-    margin-right: 3%;
+    margin-left: 2%;
+    margin-right: 2%;
 }
 
     .content * {
@@ -336,9 +336,17 @@ input[type="text"], input[type="password"] {
         text-decoration: none;
     }
 
+.collectionDetailedInfoContent {
+    display: flex;
+}
+
 .collectionDetailedInfo {
-    column-width: 400px;
+    /*column-width: 400px;*/
+    /*瀑布流*/
     column-gap: 10px;
+    width: 33.33%;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
     .collectionDetailedInfo .type-block {
@@ -361,6 +369,20 @@ input[type="text"], input[type="password"] {
     position: fixed;
     top: 45px;
     left: 10px;
+    padding: 4px;
+    border-radius: 4px;
+    padding-right: 8px;
+    padding-left: 8px;
+    background: #C2C3C4;
+    color: #fff;
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.allFold {
+    position: fixed;
+    top: 45px;
+    left: 45px;
     padding: 4px;
     border-radius: 4px;
     padding-right: 8px;
@@ -403,4 +425,20 @@ input[type="text"], input[type="password"] {
 
 .showblock {
     box-shadow: #aeaeae 0 0 15px;
+}
+
+.btn-type-shwodisplay {
+    float: right;
+}
+
+    .btn-type-shwodisplay img {
+        width: 15px;
+    }
+
+.type-block .div-block {
+    display: none;
+}
+
+.type-block.show .div-block {
+    display: block;
 }

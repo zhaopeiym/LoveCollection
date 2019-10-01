@@ -5,10 +5,9 @@
     var user = ViewBag.UserInfo as UserInfoModel;
 }
 
-<link href="~/css/Index.css?v=20190810" rel="stylesheet" />
+<link href="~/css/Index.css?v=201901001" rel="stylesheet" />
 <link href="~/css/_all.css" rel="stylesheet" />
 <style type="text/css">
-   
 </style>
 
 <div class="content clearfix">
@@ -45,8 +44,16 @@
         </div>
     }
     @{
-        <div class="collectionDetailedInfo">
+        <div class="collectionDetailedInfoContent">
+            <div class="collectionDetailedInfo collectionDetailedInfo1">
 
+            </div>
+            <div class="collectionDetailedInfo collectionDetailedInfo2">
+
+            </div>
+            <div class="collectionDetailedInfo collectionDetailedInfo3">
+
+            </div>
         </div>
     }
 
@@ -59,8 +66,12 @@
     </div>
     @*<img class="directoryItmeTypesDel" src="/images/Delete.png" />*@
 </div>
-<div class="showDirectory">
+<div class="showDirectory displayNone">
     显示目录
+</div>
+
+<div class="allFold">
+    全部折叠
 </div>
 
 <div class="modal displayNone">
@@ -88,27 +99,33 @@
     var types = @(Html.Raw(ViewBag.Types));
     var collections = @(Html.Raw(ViewBag.Collections));
     if (types) {
-        var tempHtml = "";
+        var typeids = localStorage.getItem("showTypeList").split(',');
         var tempTypes = "";
+        var collectionDetailedInfo1 = "";
+        var collectionDetailedInfo2 = "";
+        var collectionDetailedInfo3 = "";
+        var collectionDetailedInfo4 = "";
+        var pageNumber = types.length / 3;
         for (var i = 0; i < types.length; i++) {
-            var type = types[i];            
-            tempHtml += '<div class="type-block" data-typeid="' + type.Id+'">\
-                            <div id="' + type.Id +'" data-id="' + type.Id+'" class="panel-title">\
-                                <span draggable="true">' + type.Name+'</span>\
+            var tempHtml = "";
+            var type = types[i];
+            tempHtml += '<div class="type-block '+ (typeids.indexOf(type.Id.toString())>-1?"show":"") +'" data-typeid="' + type.Id + '">\
+                            <div id="' + type.Id + '" data-id="' + type.Id + '" class="panel-title">\
+                                <span draggable="true">' + type.Name + '</span>\
                                 <a class="btn-type-edit visibilityHidden"><img src="/images/edit.png" /></a>\
                                 <a class="btn-type-del visibilityHidden"><img src="/images/Delete.png" /></a>\
+                                <a class="btn-type-shwodisplay"><img src="/images/'+(typeids.indexOf(type.Id.toString())>-1?"下":"左")+'.png" /></a>\
                             </div>\
                             <div class="div-block clearfix">';
             var cellTempHtml = "";
             for (var j = 0; j < collections.length; j++) {
                 var collection = collections[j];
-                if (collection.TypeId == type.Id)
-                {
-                    cellTempHtml += ' <div class="cell" data-id="' + collection.Id+'">\
+                if (collection.TypeId == type.Id) {
+                    cellTempHtml += ' <div class="cell" data-id="' + collection.Id + '">\
                             <div class="div-edit">\
                                 <span class="span-edit">\
-                                    <a class="a-url-address" draggable="true" title="'+ collection.Title+'"\
-                                       href="'+ collection.Url + '">' + collection.Title+'</a>\
+                                    <a class="a-url-address" draggable="true" title="'+ collection.Title + '"\
+                                       href="'+ collection.Url + '">' + collection.Title + '</a>\
                                 </span>\
                                 <a class="btn-edit visibilityHidden"><img src="/images/edit.png" /></a>\
                                 <a class="btn-del visibilityHidden"><img src="/images/Delete.png" /></a>\
@@ -117,17 +134,28 @@
                 }
             }
             tempHtml += cellTempHtml;
-                tempHtml += '<div class="cell">\
+            tempHtml += '<div class="cell">\
                                 <div class="div-edit">\
                                     <span class="span-edit btn-new visibilityHidden displayInlineBlock">新增</span>\
                                 </div>\
                              </div>\
                           </div>\
                       </div>';
-        }
-        $(".collectionDetailedInfo").html(tempHtml);
 
-       
+            if (pageNumber > i) {
+                collectionDetailedInfo1 += tempHtml;
+            }
+            else if (pageNumber * 2 > i) {
+                collectionDetailedInfo2 += tempHtml;
+            }
+            else {
+                  collectionDetailedInfo3 += tempHtml;
+            }
+        }
+        $(".collectionDetailedInfo1").html(collectionDetailedInfo1);
+        $(".collectionDetailedInfo2").html(collectionDetailedInfo2);;
+        $(".collectionDetailedInfo3").html(collectionDetailedInfo3);
+
         //目录数据组装
         //排序
         types.sort(
@@ -139,8 +167,10 @@
             var type = types[i];
             tempTypes += "<div><a class='apositioning' data-typeid='" + type.Id + "' href='/#" + type.Id + "'>" + type.Name + "</a></div>";
         }
-        $(".directoryItmeTypes").html(tempTypes);      
+        $(".directoryItmeTypes").html(tempTypes);
+
     }
+
 </script>
-<script src="~/js/Index.js?v=20190520"></script>
+<script src="~/js/Index.js?v=201901001"></script>
 

@@ -514,7 +514,7 @@
                 evt = window.event || e;
                 var obj = evt.toElement || evt.relatedTarget;
                 var pa = this;
-                if (pa.contains(obj)) return false; 
+                if (pa.contains(obj)) return false;
 
                 $(this).addClass("displayNone");
                 $(".showDirectory").removeClass("displayNone");
@@ -534,6 +534,50 @@
                 //隐藏
                 $(".directoryItmeTypesContent").addClass("displayNone");
                 $(".showDirectory").removeClass("displayNone");
+            });
+
+            //全部折叠展开
+            $(".allFold").click(function () {
+                if ($(this).html().trim() === "全部折叠") {
+                    $(this).html("全部展开");
+                    $(".collectionDetailedInfo")
+                        .find(".type-block").removeClass("show")
+                        .find(".btn-type-shwodisplay")
+                        .find("img")
+                        .attr("src", "/images/左.png");
+                    localStorage.setItem("showTypeList", []);
+
+                }
+                else {
+                    $(this).html("全部折叠");
+                    $(".collectionDetailedInfo").find(".type-block").addClass("show")
+                        .find(".btn-type-shwodisplay")
+                        .find("img").attr("src", "/images/下.png");
+                    localStorage.setItem("showTypeList", types.map(function (item) { return item.Id; }));
+                }
+            });
+            //折叠展开
+            $(".collectionDetailedInfo").on("click", ".panel-title", function () {
+                var $this = $(this).find(".btn-type-shwodisplay");
+                if ($this.closest(".type-block").hasClass("show")) {
+                    $this.find("img").attr("src", "/images/左.png");
+                    $this.closest(".type-block").find(".div-block").hide(100, function () {
+                        $this.closest(".type-block").removeClass("show");
+                    });
+                }
+                else {
+                    $this.find("img").attr("src", "/images/下.png");
+                    $this.closest(".type-block").find(".div-block").show(100, function () {
+                        $this.closest(".type-block").addClass("show");
+                    });
+                }
+                //等动画完成后执行
+                setTimeout(function () {
+                    var typeids = $(".type-block.show").map(function (i, item) {
+                        return $(item).data("typeid");
+                    });
+                    localStorage.setItem("showTypeList", typeids.toArray());
+                }, 150);
             });
         },
         //方法
@@ -561,4 +605,6 @@
 
 $(function () {
     loveCollection.init();
+
+
 });
