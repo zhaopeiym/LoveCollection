@@ -99,7 +99,8 @@
     var types = @(Html.Raw(ViewBag.Types));
     var collections = @(Html.Raw(ViewBag.Collections));
     if (types) {
-        var typeids = localStorage.getItem("showTypeList").split(',');
+        var showTypeList=  localStorage.getItem("showTypeList");
+        var typeids = showTypeList ? showTypeList.split(',') : [];
         var tempTypes = "";
         var collectionDetailedInfo1 = "";
         var collectionDetailedInfo2 = "";
