@@ -542,6 +542,7 @@
                     $(this).html("全部展开");
                     $(".collectionDetailedInfo")
                         .find(".type-block").removeClass("show")
+                        .find(".div-block").hide()
                         .find(".btn-type-shwodisplay")
                         .find("img")
                         .attr("src", "/images/左.png");
@@ -550,10 +551,12 @@
                 }
                 else {
                     $(this).html("全部折叠");
-                    $(".collectionDetailedInfo").find(".type-block").addClass("show")
+                    $(".collectionDetailedInfo")
+                        .find(".type-block").addClass("show")
+                        .find(".div-block").show()
                         .find(".btn-type-shwodisplay")
                         .find("img").attr("src", "/images/下.png");
-                    localStorage.setItem("showTypeList", types.map(function (item) { return item.Id; }));
+                    localStorage.setItem("showTypeList", types.map(function (item) { return item.Id; }));                  
                 }
             });
             //折叠展开
